@@ -1,0 +1,16 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/analysislist?currentSchema=analysislist
+    username: test123
+    password: test123
+    driver-class-name: org.postgresql.Driver
+sql:
+  init:
+    mode: always
+    continue-on-error: false
+    data-locations: classpath:demo_data.sql
+security:
+  jwt:
+    secret: Z3Jlc2dlIHJzZ3NyZCBzcmdzZ3NnZGRzZ2RzZ2Rz
+    access: 3600000
+    refresh: 2592000000

@@ -1,0 +1,65 @@
+package com.example.analyzerofanalyses.web.controller;
+
+import com.example.analyzerofanalyses.domain.analysis.Analysis;
+import com.example.analyzerofanalyses.domain.user.User;
+import com.example.analyzerofanalyses.service.AnalysisService;
+import com.example.analyzerofanalyses.service.UserService;
+import com.example.analyzerofanalyses.web.dto.analysis.AnalysisDto;
+import com.example.analyzerofanalyses.web.dto.user.UserDto;
+import com.example.analyzerofanalyses.web.dto.validation.OnCreate;
+import com.example.analyzerofanalyses.web.dto.validation.OnUpdate;
+import com.example.analyzerofanalyses.web.mappers.AnalysisMapper;
+import com.example.analyzerofanalyses.web.mappers.UserMapper;
+import lombok.RequiredArgsConstructor;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/v1/users")
+@RequiredArgsConstructor
+@Validated
+public class UserController {
+    private final UserService userService;
+    private final AnalysisService analysisService;
+
+    private final UserMapper userMapper;
+    private final AnalysisMapper analysisMapper;
+
+    @PutMapping
+    public UserDto update(@Validated(OnUpdate.class) @RequestBody UserDto dto) {
+        User user = userMapper.toEntity(dto);
+        User updatedUser = userService.updated(user);
+
+        return userMapper.toDto(updatedUser);
+    }
+
+    @GetMapping("/{id}")
+    public UserDto getById(@PathVariable Long id) {
+        User user = userService.getById(id);
+
+        return userMapper.toDto(user);
+    }
+
+    @DeleteMapping("/{id}")
+    public void deleteById(@PathVariable Long id) {
+        userService.delete(id);
+    }
+
+    @GetMapping("/{id}/tasks")
+    public List<AnalysisDto> getAnalysesByUserId(@PathVariable Long id) {
+        List<Analysis> analyses = analysisService.getAllByUserId(id);
+
+        return analysisMapper.toDto(analyses);
+    }
+
+    @PostMapping("/{id}/analyses")
+    public AnalysisDto createAnalysis(@PathVariable Long id, @Validated(OnCreate.class) @RequestBody AnalysisDto dto) {
+        Analysis analysis = analysisMapper.toEntity(dto);
+        Analysis createdAnalysis = analysisService.create(analysis, id);
+
+        return analysisMapper.toDto(createdAnalysis);
+    }
+}

@@ -1,0 +1,17 @@
+  version: '3.1'
+
+  services:
+    db:
+      image: postgres:15
+      restart: always
+      environment:
+        POSTGRES_USER: test123
+        POSTGRES_PASSWORD: test123
+        POSTGRES_DB: analysislist  # Имя вашей базы данных (по желанию)
+      ports:
+        - "5432:5432"  # Публикация порта 5432
+      volumes:
+        - db_data:/var/lib/postgresql/data  # Хранение данных в volume
+
+  volumes:
+    db_data:
