@@ -1,6 +1,7 @@
 package com.example.analyzerofanalyses.domain.user;
 
 import com.example.analyzerofanalyses.domain.analysis.Analysis;
+import com.example.analyzerofanalyses.domain.symptom.Symptom;
 import lombok.Data;
 
 import java.util.List;
@@ -14,6 +15,7 @@ public class User {
     private String password;
     private String passwordConfirmation;
     private Set<Role> roles;
+    private List<Symptom> symptoms;
     private List<Analysis> analyses;
 
 }

@@ -1,16 +1,23 @@
 package com.example.analyzerofanalyses.web.controller;
 
 import com.example.analyzerofanalyses.domain.analysis.Analysis;
+import com.example.analyzerofanalyses.domain.symptom.Symptom;
 import com.example.analyzerofanalyses.domain.user.User;
 import com.example.analyzerofanalyses.service.AnalysisService;
+import com.example.analyzerofanalyses.service.SymptomService;
 import com.example.analyzerofanalyses.service.UserService;
 import com.example.analyzerofanalyses.web.dto.analysis.AnalysisDto;
+import com.example.analyzerofanalyses.web.dto.symptom.SymptomDto;
 import com.example.analyzerofanalyses.web.dto.user.UserDto;
 import com.example.analyzerofanalyses.web.dto.validation.OnCreate;
 import com.example.analyzerofanalyses.web.dto.validation.OnUpdate;
 import com.example.analyzerofanalyses.web.mappers.AnalysisMapper;
+import com.example.analyzerofanalyses.web.mappers.SymptomMapper;
 import com.example.analyzerofanalyses.web.mappers.UserMapper;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,16 +26,20 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/users")
-@RequiredArgsConstructor
+@RequiredArgsConstructor(onConstructor = @__(@Lazy))
 @Validated
+@Tag(name = "User controller", description = "User API")
 public class UserController {
     private final UserService userService;
+    private final SymptomService symptomService;
     private final AnalysisService analysisService;
 
     private final UserMapper userMapper;
+    private final SymptomMapper symptomMapper;
     private final AnalysisMapper analysisMapper;
 
     @PutMapping
+    @Operation(summary = "Update user")
     public UserDto update(@Validated(OnUpdate.class) @RequestBody UserDto dto) {
         User user = userMapper.toEntity(dto);
         User updatedUser = userService.updated(user);
@@ -37,18 +48,41 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
+    @Operation(summary = "Get UserDto by id")
     public UserDto getById(@PathVariable Long id) {
+        System.out.println("id: " + id);
         User user = userService.getById(id);
+        System.out.println("user: " + user);
+        System.out.println("userMapper.toDto(user): " + userMapper.toDto(user));
 
         return userMapper.toDto(user);
     }
 
     @DeleteMapping("/{id}")
+    @Operation(summary = "Delete user by id")
     public void deleteById(@PathVariable Long id) {
         userService.delete(id);
     }
 
-    @GetMapping("/{id}/tasks")
+    @GetMapping("/{id}/symptoms")
+    @Operation(summary = "Get all User symptoms")
+    public List<SymptomDto> getSymptomsByUserId(@PathVariable Long id) {
+        List<Symptom> symptoms = symptomService.getAllByUserId(id);
+
+        return symptomMapper.toDto(symptoms);
+    }
+
+    @PostMapping("/{id}/symptoms")
+    @Operation(summary = "Add symptom to user")
+    public SymptomDto createSymptom(@PathVariable Long id, @Validated(OnCreate.class) @RequestBody SymptomDto dto) {
+        Symptom symptom = symptomMapper.toEntity(dto);
+        Symptom createdSymptoms = symptomService.create(symptom, id);
+
+        return symptomMapper.toDto(createdSymptoms);
+    }
+
+    @GetMapping("/{id}/analyses")
+    @Operation(summary = "Get all User analyses")
     public List<AnalysisDto> getAnalysesByUserId(@PathVariable Long id) {
         List<Analysis> analyses = analysisService.getAllByUserId(id);
 
@@ -56,6 +90,7 @@ public class UserController {
     }
 
     @PostMapping("/{id}/analyses")
+    @Operation(summary = "Add analysis to user")
     public AnalysisDto createAnalysis(@PathVariable Long id, @Validated(OnCreate.class) @RequestBody AnalysisDto dto) {
         Analysis analysis = analysisMapper.toEntity(dto);
         Analysis createdAnalysis = analysisService.create(analysis, id);

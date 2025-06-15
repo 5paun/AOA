@@ -11,6 +11,8 @@ public interface UserService {
 
     User create(User user);
 
+    boolean isSymptomOwner (Long userId, Long symptomId);
+
     boolean isAnalysisOwner(Long userId, Long analysisId);
 
     void delete(Long id);

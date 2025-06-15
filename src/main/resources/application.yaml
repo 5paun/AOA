@@ -4,9 +4,13 @@ spring:
     username: test123
     password: test123
     driver-class-name: org.postgresql.Driver
+liquibase:
+  change-log: classpath:liquibase/db.changelog.yaml
+  enabled: true
+  default-schema: analysislist
 sql:
   init:
-    mode: always
+    mode: never
     continue-on-error: false
     data-locations: classpath:demo_data.sql
 security:
@@ -14,3 +18,5 @@ security:
     secret: Z3Jlc2dlIHJzZ3NyZCBzcmdzZ3NnZGRzZ2RzZ2Rz
     access: 3600000
     refresh: 2592000000
+springdoc:
+  override-with-generic-response: false

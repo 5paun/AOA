@@ -5,20 +5,25 @@ import com.example.analyzerofanalyses.service.AnalysisService;
 import com.example.analyzerofanalyses.web.dto.analysis.AnalysisDto;
 import com.example.analyzerofanalyses.web.dto.validation.OnUpdate;
 import com.example.analyzerofanalyses.web.mappers.AnalysisMapper;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/analyses")
-@RequiredArgsConstructor
+@RequiredArgsConstructor(onConstructor = @__(@Lazy))
 @Validated
+@Tag(name = "Analysis controller", description = "Analysis API")
 public class AnalysisController {
     private final AnalysisService analysisService;
 
     private final AnalysisMapper analysisMapper;
 
     @PutMapping
+    @Operation(summary = "Update analysis")
     public AnalysisDto update(@Validated(OnUpdate.class) @RequestBody AnalysisDto dto) {
         Analysis analysis = analysisMapper.toEntity(dto);
         Analysis updatedAnalysis = analysisService.update(analysis);
@@ -27,6 +32,7 @@ public class AnalysisController {
     }
 
     @GetMapping("/{id}")
+    @Operation(summary = "Get AnalysisDto by id")
     public AnalysisDto getById(@PathVariable Long id) {
         Analysis analysis = analysisService.getById(id);
 
@@ -34,6 +40,7 @@ public class AnalysisController {
     }
 
     @DeleteMapping("/{id}")
+    @Operation(summary = "Delete analysis  user")
     public void deleteById(@PathVariable Long id) {
         analysisService.delete(id);
     }

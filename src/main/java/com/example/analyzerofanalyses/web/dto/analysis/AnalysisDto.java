@@ -19,6 +19,10 @@ public class AnalysisDto {
     @Length(max = 255, message = "Title length must be smaller than 255 symbols", groups = {OnCreate.class, OnUpdate.class})
     private String title;
 
+    private float totalCholesterol;
+    private float whiteBloodCells;
+    private int lymphocytes;
+
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDateTime createdDate;
