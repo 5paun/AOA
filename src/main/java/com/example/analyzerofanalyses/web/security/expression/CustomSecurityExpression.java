@@ -16,17 +16,10 @@ public class CustomSecurityExpression {
     private final UserService userService;
 
     public boolean canAccessUser(Long id) {
-        System.out.println("id " + id);
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        System.out.println("authentication " + authentication);
 
         JwtEntity user = (JwtEntity) authentication.getPrincipal();
-        System.out.println("user " + user);
-
         Long userId = user.getId();
-        System.out.println("userId " + userId);
-        System.out.println("userId.equals(id) " + userId.equals(id));
-        System.out.println("hasAnyRole(authentication, Role.ROLE_ADMIN) " + hasAnyRole(authentication, Role.ROLE_ADMIN));
 
         return userId.equals(id) || hasAnyRole(authentication, Role.ROLE_ADMIN);
     }
@@ -43,16 +36,16 @@ public class CustomSecurityExpression {
         return false;
     }
 
-    private boolean canAccessSymptom(Long symptomId) {
+    public boolean canAccessSymptom(Long symptomId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         JwtEntity user = (JwtEntity) authentication.getPrincipal();
         Long userId = user.getId();
 
-        return userService.isAnalysisOwner(userId, symptomId);
+        return userService.isSymptomOwner(userId, symptomId);
     }
 
-    private boolean canAccessAnalysis(Long analysisId) {
+    public boolean canAccessAnalysis(Long analysisId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         JwtEntity user = (JwtEntity) authentication.getPrincipal();

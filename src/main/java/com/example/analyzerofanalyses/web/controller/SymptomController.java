@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,6 +25,7 @@ public class SymptomController {
 
     @PutMapping
     @Operation(summary = "Update symptom")
+    @PreAuthorize("@customSecurityExpression.canAccessSymptom(#dto.id)")
     public SymptomDto update(@Validated(OnUpdate.class) @RequestBody SymptomDto dto) {
         Symptom symptom = symptomMapper.toEntity(dto);
         Symptom updatedSymptom = symptomService.update(symptom);
@@ -33,6 +35,7 @@ public class SymptomController {
 
     @GetMapping("/{id}")
     @Operation(summary = "Get SymptomDto by id")
+    @PreAuthorize("@customSecurityExpression.canAccessSymptom(#id)")
     public SymptomDto getById(@PathVariable Long id) {
         Symptom symptom = symptomService.getById(id);
 
@@ -41,6 +44,7 @@ public class SymptomController {
 
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete symptom user")
+    @PreAuthorize("@customSecurityExpression.canAccessSymptom(#id)")
     public void deleteById(@PathVariable Long id) {
         symptomService.delete(id);
     }
