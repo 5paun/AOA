@@ -18,6 +18,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -40,6 +41,7 @@ public class UserController {
 
     @PutMapping
     @Operation(summary = "Update user")
+    @PreAuthorize("@customSecurityExpression.canAccessUser(#dto.id)")
     public UserDto update(@Validated(OnUpdate.class) @RequestBody UserDto dto) {
         User user = userMapper.toEntity(dto);
         User updatedUser = userService.updated(user);
@@ -49,23 +51,23 @@ public class UserController {
 
     @GetMapping("/{id}")
     @Operation(summary = "Get UserDto by id")
+    @PreAuthorize("@customSecurityExpression.canAccessUser(#id)")
     public UserDto getById(@PathVariable Long id) {
-        System.out.println("id: " + id);
         User user = userService.getById(id);
-        System.out.println("user: " + user);
-        System.out.println("userMapper.toDto(user): " + userMapper.toDto(user));
 
         return userMapper.toDto(user);
     }
 
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete user by id")
+    @PreAuthorize("@customSecurityExpression.canAccessUser(#id)")
     public void deleteById(@PathVariable Long id) {
         userService.delete(id);
     }
 
     @GetMapping("/{id}/symptoms")
     @Operation(summary = "Get all User symptoms")
+    @PreAuthorize("@customSecurityExpression.canAccessUser(#id)")
     public List<SymptomDto> getSymptomsByUserId(@PathVariable Long id) {
         List<Symptom> symptoms = symptomService.getAllByUserId(id);
 
@@ -74,6 +76,7 @@ public class UserController {
 
     @PostMapping("/{id}/symptoms")
     @Operation(summary = "Add symptom to user")
+    @PreAuthorize("@customSecurityExpression.canAccessUser(#id)")
     public SymptomDto createSymptom(@PathVariable Long id, @Validated(OnCreate.class) @RequestBody SymptomDto dto) {
         Symptom symptom = symptomMapper.toEntity(dto);
         Symptom createdSymptoms = symptomService.create(symptom, id);
@@ -83,6 +86,7 @@ public class UserController {
 
     @GetMapping("/{id}/analyses")
     @Operation(summary = "Get all User analyses")
+    @PreAuthorize("@customSecurityExpression.canAccessUser(#id)")
     public List<AnalysisDto> getAnalysesByUserId(@PathVariable Long id) {
         List<Analysis> analyses = analysisService.getAllByUserId(id);
 
@@ -91,6 +95,7 @@ public class UserController {
 
     @PostMapping("/{id}/analyses")
     @Operation(summary = "Add analysis to user")
+    @PreAuthorize("@customSecurityExpression.canAccessUser(#id)")
     public AnalysisDto createAnalysis(@PathVariable Long id, @Validated(OnCreate.class) @RequestBody AnalysisDto dto) {
         Analysis analysis = analysisMapper.toEntity(dto);
         Analysis createdAnalysis = analysisService.create(analysis, id);
