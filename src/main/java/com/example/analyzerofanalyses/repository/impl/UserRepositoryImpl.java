@@ -106,19 +106,19 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public Optional<User> findByUsername(String username) {
+    public Optional<User> findByEmail(String email) {
         try {
             Connection connection = dataSourceConfig.getConnection();
             PreparedStatement statement = connection.prepareStatement(FIND_BY_EMAIL,
                     ResultSet.TYPE_SCROLL_INSENSITIVE,
                     ResultSet.CONCUR_READ_ONLY);
-            statement.setString(1, username);
+            statement.setString(1, email);
 
             try (ResultSet resultSet = statement.executeQuery()) {
                 return Optional.ofNullable(UserRowMapper.mapRow(resultSet));
             }
         } catch (SQLException throwables) {
-            throw new ResourceMappingException("Exception while finding user by username.");
+            throw new ResourceMappingException("Exception while finding user by email.");
         }
     }
 
@@ -131,7 +131,7 @@ public class UserRepositoryImpl implements UserRepository {
             statement.setString(2, user.getEmail());
             statement.setString(3, user.getPassword());
             statement.setLong(4, user.getId());
-            // statement.executeUpdate();
+            statement.executeUpdate();
         } catch (SQLException throwables) {
             throw new ResourceMappingException("Exception while updating user.");
         }
@@ -145,7 +145,7 @@ public class UserRepositoryImpl implements UserRepository {
             statement.setString(1, user.getName());
             statement.setString(2, user.getEmail());
             statement.setString(3, user.getPassword());
-           statement.executeUpdate();
+            statement.executeUpdate();
 
            try (ResultSet resultSet = statement.getGeneratedKeys()) {
                resultSet.next();

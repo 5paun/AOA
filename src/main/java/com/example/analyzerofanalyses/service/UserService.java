@@ -5,7 +5,7 @@ import com.example.analyzerofanalyses.domain.user.User;
 public interface UserService {
     User getById(Long id);
 
-    User getByUsername(String username);
+    User getByEmail(String email);
 
     User updated(User user);
 

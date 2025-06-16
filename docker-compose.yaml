@@ -1,17 +1,31 @@
-  version: '3.1'
+version: '3.1'
 
-  services:
-    db:
-      image: postgres:15
-      restart: always
-      environment:
-        POSTGRES_USER: test123
-        POSTGRES_PASSWORD: test123
-        POSTGRES_DB: analysislist  # Имя вашей базы данных (по желанию)
-      ports:
-        - "5432:5432"  # Публикация порта 5432
-      volumes:
-        - db_data:/var/lib/postgresql/data  # Хранение данных в volume
+services:
+  db:
+    image: postgres:15.1-alpine
+    restart: always
+    environment:
+      POSTGRES_USER: test123
+      POSTGRES_PASSWORD: test123
+      POSTGRES_DB: analysislist  # Имя вашей базы данных (по желанию)
+    ports:
+      - "5432:5432"  # Публикация порта 5432
+    volumes:
+      - ./src/main/resources/db-init:/docker-entrypoint-initdb.d
+      - db-data:/var/lib/postgresql/data
 
-  volumes:
-    db_data:
+  redis:
+    image: redis:7.2-rc-alpine
+    restart: always
+    container_name: redis
+    ports:
+      - '6379:6379'
+    command: redis-server --save 20 1 --loglevel warning --requirepass dGVzdDEyMw==
+    volumes:
+      - cache:/data
+
+volumes:
+  db-data:
+    driver: local
+  cache:
+    driver: local
