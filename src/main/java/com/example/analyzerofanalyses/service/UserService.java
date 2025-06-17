@@ -7,7 +7,7 @@ public interface UserService {
 
     User getByEmail(String email);
 
-    User updated(User user);
+    User update(User user);
 
     User create(User user);
 

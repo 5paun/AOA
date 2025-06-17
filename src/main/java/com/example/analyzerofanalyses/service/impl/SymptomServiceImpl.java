@@ -2,8 +2,10 @@ package com.example.analyzerofanalyses.service.impl;
 
 import com.example.analyzerofanalyses.domain.exception.ResourceNotFoundException;
 import com.example.analyzerofanalyses.domain.symptom.Symptom;
+import com.example.analyzerofanalyses.domain.user.User;
 import com.example.analyzerofanalyses.repository.SymptomRepository;
 import com.example.analyzerofanalyses.service.SymptomService;
+import com.example.analyzerofanalyses.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
@@ -17,6 +19,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SymptomServiceImpl implements SymptomService {
     private final SymptomRepository symptomRepository;
+    private final UserService userService;
 
     @Override
     @Transactional(readOnly = true)
@@ -35,7 +38,7 @@ public class SymptomServiceImpl implements SymptomService {
     @Transactional
     @CachePut(value = "SymptomService::getById", key = "#symptom.id")
     public Symptom update(Symptom symptom) {
-        symptomRepository.update(symptom);
+        symptomRepository.save(symptom);
 
         return symptom;
     }
@@ -44,8 +47,9 @@ public class SymptomServiceImpl implements SymptomService {
     @Transactional
     @Cacheable(value = "SymptomService::getById", key = "#symptom.id")
     public Symptom create(Symptom symptom, Long userId) {
-        symptomRepository.create(symptom);
-        symptomRepository.assignToUserById(symptom.getId(), userId);
+        User user = userService.getById(userId);
+        user.getSymptoms().add(symptom);
+        userService.update(user);
 
         return symptom;
     }
@@ -54,6 +58,6 @@ public class SymptomServiceImpl implements SymptomService {
     @Transactional
     @CacheEvict(value = "SymptomService::getById", key = "#id")
     public void delete(Long id) {
-        symptomRepository.delete(id);
+        symptomRepository.deleteById(id);
     }
 }

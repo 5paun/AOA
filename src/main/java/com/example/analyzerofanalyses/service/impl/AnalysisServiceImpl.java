@@ -2,8 +2,10 @@ package com.example.analyzerofanalyses.service.impl;
 
 import com.example.analyzerofanalyses.domain.analysis.Analysis;
 import com.example.analyzerofanalyses.domain.exception.ResourceNotFoundException;
+import com.example.analyzerofanalyses.domain.user.User;
 import com.example.analyzerofanalyses.repository.AnalysisRepository;
 import com.example.analyzerofanalyses.service.AnalysisService;
+import com.example.analyzerofanalyses.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
@@ -18,6 +20,7 @@ import java.util.List;
 public class AnalysisServiceImpl implements AnalysisService {
 
     private final AnalysisRepository analysisRepository;
+    private final UserService userService;
 
     @Override
     @Transactional(readOnly = true)
@@ -36,7 +39,7 @@ public class AnalysisServiceImpl implements AnalysisService {
     @Transactional
     @CachePut(value = "AnalysisService::getById::getById", key = "#analysis.id")
     public Analysis update(Analysis analysis) {
-        analysisRepository.update(analysis);
+        analysisRepository.save(analysis);
 
         return analysis;
     }
@@ -45,8 +48,9 @@ public class AnalysisServiceImpl implements AnalysisService {
     @Transactional
     @Cacheable(value = "AnalysisService::getById", key = "#analysis.id")
     public Analysis create(Analysis analysis, Long userId) {
-        analysisRepository.create(analysis);
-        analysisRepository.assignToUserById(analysis.getId(), userId);
+        User user = userService.getById(userId);
+        user.getAnalyses().add(analysis);
+        userService.update(user);
 
         return analysis;
     }
@@ -55,6 +59,6 @@ public class AnalysisServiceImpl implements AnalysisService {
     @Transactional
     @CacheEvict(value = "AnalysisService::getById", key = "#id")
     public void delete(Long id) {
-        analysisRepository.delete(id);
+        analysisRepository.deleteById(id);
     }
 }

@@ -27,6 +27,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/users")
+// в курсе не было onConstructor = @__(@Lazy), но это исправляет ошибку с маппером
 @RequiredArgsConstructor(onConstructor = @__(@Lazy))
 @Validated
 @Tag(name = "User controller", description = "User API")
@@ -44,7 +45,7 @@ public class UserController {
     @PreAuthorize("@customSecurityExpression.canAccessUser(#dto.id)")
     public UserDto update(@Validated(OnUpdate.class) @RequestBody UserDto dto) {
         User user = userMapper.toEntity(dto);
-        User updatedUser = userService.updated(user);
+        User updatedUser = userService.update(user);
 
         return userMapper.toDto(updatedUser);
     }

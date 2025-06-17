@@ -1,6 +1,6 @@
 insert into users (name, email, password)
 values ('John Doe', 'johndoe@gmail.com', '$2a$10$Xl0yhvzLIaJCDdKBS0Lld.ksK7c2Zytg/ZKFdtIYYQUv8rUfvCR4W'),
-       ('Denis Shalashov', 'Shalashov-D-S@tut.by', 'test123'),
+       ('Denis Shalashov', 'Shalashov-D-S@tut.by', '$2a$10$Xl0yhvzLIaJCDdKBS0Lld.ksK7c2Zytg/ZKFdtIYYQUv8rUfvCR4W'),
        ('Mike Smith', 'mikesmith@yahoo.com', '$2a$10$fFLij9aYgaNCFPTL9WcA/uoCRukxnwf.vOQ8nrEEOskrCNmGsxY7m');
 
 insert into symptoms (title)

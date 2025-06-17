@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/v1/auth")
+// в курсе не было onConstructor = @__(@Lazy), но это исправляет ошибку с маппером
 @RequiredArgsConstructor(onConstructor = @__(@Lazy))
 @Validated
 @Tag(name = "Auth controller", description = "Auth API")

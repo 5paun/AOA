@@ -43,9 +43,9 @@ public class UserServiceImpl implements UserService {
             @CachePut(value = "UserService::getById", key = "#user.id"),
             @CachePut(value = "UserService::getByEmail", key = "#user.email")
     })
-    public User updated(User user) {
+    public User update(User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        userRepository.update(user);
+        userRepository.save(user);
 
         return user;
     }
@@ -65,10 +65,9 @@ public class UserServiceImpl implements UserService {
         }
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        userRepository.create(user);
         Set<Role> roles = Set.of(Role.ROLE_USER);
-        userRepository.insertUserRole(user.getId(), Role.ROLE_USER);
         user.setRoles(roles);
+        userRepository.save(user);
 
         return user;
     }
@@ -90,6 +89,6 @@ public class UserServiceImpl implements UserService {
     @Override
     @CacheEvict(value = "UserService.getById", key = "#id")
     public void delete(Long id) {
-        userRepository.delete(id);
+        userRepository.deleteById(id);
     }
 }
