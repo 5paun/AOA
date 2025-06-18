@@ -40,3 +40,17 @@ create table if not exists users_roles
     primary key (user_id, role),
     constraint fk_users_roles_users foreign key (user_id) references users (id) on delete cascade on update no action
     );
+
+create table if not exists analyses_images
+(
+    analysis_id bigint not null,
+    image varchar(255) not null,
+    constraint fk_analyses_images_analyses foreign key (analysis_id) references analyses (id) on delete cascade on update no action
+    );
+
+create table if not exists symptoms_images
+(
+    symptom_id bigint not null,
+    image varchar(255) not null,
+    constraint fk_symptoms_images_symptoms foreign key (symptom_id) references symptoms (id) on delete cascade on update no action
+    );

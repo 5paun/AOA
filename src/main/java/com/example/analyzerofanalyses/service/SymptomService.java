@@ -2,6 +2,7 @@ package com.example.analyzerofanalyses.service;
 
 
 import com.example.analyzerofanalyses.domain.symptom.Symptom;
+import com.example.analyzerofanalyses.domain.symptom.SymptomImage;
 
 import java.util.List;
 
@@ -15,4 +16,6 @@ public interface SymptomService {
     Symptom create(Symptom symptom, Long userId);
 
     void delete(Long id);
+
+    void uploadImage(Long id, SymptomImage image);
 }

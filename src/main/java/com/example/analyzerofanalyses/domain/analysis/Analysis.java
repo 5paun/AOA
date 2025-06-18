@@ -5,6 +5,7 @@ import lombok.Data;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "analysis")
@@ -20,4 +21,9 @@ public class Analysis implements Serializable {
     private float whiteBloodCells;
     private int lymphocytes;
     private LocalDateTime createdDate;
+
+    @Column(name = "image")
+    @CollectionTable(name = "analyses_images")
+    @ElementCollection
+    private List<String> images;
 }

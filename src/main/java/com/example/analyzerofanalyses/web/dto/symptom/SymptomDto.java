@@ -2,9 +2,12 @@ package com.example.analyzerofanalyses.web.dto.symptom;
 
 import com.example.analyzerofanalyses.web.dto.validation.OnCreate;
 import com.example.analyzerofanalyses.web.dto.validation.OnUpdate;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
+
+import java.util.List;
 
 
 @Data
@@ -23,4 +26,7 @@ public class SymptomDto {
     @NotNull(message = "Recommendation must be not null.", groups = {OnCreate.class, OnUpdate.class})
     @Length(max = 1000, message = "Recommendation length must be smaller than 1000 symbols", groups = {OnCreate.class, OnUpdate.class})
     private String recommendation;
+
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private List<String> images;
 }

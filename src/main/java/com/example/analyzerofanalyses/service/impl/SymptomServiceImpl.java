@@ -2,8 +2,10 @@ package com.example.analyzerofanalyses.service.impl;
 
 import com.example.analyzerofanalyses.domain.exception.ResourceNotFoundException;
 import com.example.analyzerofanalyses.domain.symptom.Symptom;
+import com.example.analyzerofanalyses.domain.symptom.SymptomImage;
 import com.example.analyzerofanalyses.domain.user.User;
 import com.example.analyzerofanalyses.repository.SymptomRepository;
+import com.example.analyzerofanalyses.service.ImageService;
 import com.example.analyzerofanalyses.service.SymptomService;
 import com.example.analyzerofanalyses.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +22,7 @@ import java.util.List;
 public class SymptomServiceImpl implements SymptomService {
     private final SymptomRepository symptomRepository;
     private final UserService userService;
+    private final ImageService imageService;
 
     @Override
     @Transactional(readOnly = true)
@@ -59,5 +62,15 @@ public class SymptomServiceImpl implements SymptomService {
     @CacheEvict(value = "SymptomService::getById", key = "#id")
     public void delete(Long id) {
         symptomRepository.deleteById(id);
+    }
+
+    @Override
+    @Transactional
+    @CacheEvict(value = "SymptomService::getById", key = "#id")
+    public void uploadImage(Long id, SymptomImage image) {
+        Symptom symptom = getById(id);
+        String fileName = imageService.upload(image);
+        symptom.getImages().add(fileName);
+        symptomRepository.save(symptom);
     }
 }

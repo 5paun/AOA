@@ -1,7 +1,9 @@
 package com.example.analyzerofanalyses.config;
 
+import com.example.analyzerofanalyses.service.props.MinioProperties;
 import com.example.analyzerofanalyses.web.security.JwtTokenFilter;
 import com.example.analyzerofanalyses.web.security.JwtTokenProvider;
+import io.minio.MinioClient;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
@@ -32,6 +34,7 @@ public class ApplicationConfig {
 
     private final JwtTokenProvider tokenProvider;
     private final ApplicationContext applicationContext;
+    private final MinioProperties minioProperties;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -41,6 +44,14 @@ public class ApplicationConfig {
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
         return configuration.getAuthenticationManager();
+    }
+
+    @Bean
+    public MinioClient minioClient() {
+        return MinioClient.builder()
+                .endpoint(minioProperties.getUrl())
+                .credentials(minioProperties.getAccessKey(), minioProperties.getSecretKey())
+                .build();
     }
 
     @Bean

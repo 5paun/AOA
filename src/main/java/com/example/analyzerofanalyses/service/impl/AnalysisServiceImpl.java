@@ -1,10 +1,12 @@
 package com.example.analyzerofanalyses.service.impl;
 
 import com.example.analyzerofanalyses.domain.analysis.Analysis;
+import com.example.analyzerofanalyses.domain.analysis.AnalysisImage;
 import com.example.analyzerofanalyses.domain.exception.ResourceNotFoundException;
 import com.example.analyzerofanalyses.domain.user.User;
 import com.example.analyzerofanalyses.repository.AnalysisRepository;
 import com.example.analyzerofanalyses.service.AnalysisService;
+import com.example.analyzerofanalyses.service.ImageService;
 import com.example.analyzerofanalyses.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
@@ -21,6 +23,7 @@ public class AnalysisServiceImpl implements AnalysisService {
 
     private final AnalysisRepository analysisRepository;
     private final UserService userService;
+    private final ImageService imageService;
 
     @Override
     @Transactional(readOnly = true)
@@ -60,5 +63,15 @@ public class AnalysisServiceImpl implements AnalysisService {
     @CacheEvict(value = "AnalysisService::getById", key = "#id")
     public void delete(Long id) {
         analysisRepository.deleteById(id);
+    }
+
+    @Override
+    @Transactional
+    @CacheEvict(value = "AnalysisService::getById", key = "#id")
+    public void uploadImage(Long id, AnalysisImage image) {
+        Analysis analysis = getById(id);
+        String fileName = imageService.upload(image);
+        analysis.getImages().add(fileName);
+        analysisRepository.save(analysis);
     }
 }

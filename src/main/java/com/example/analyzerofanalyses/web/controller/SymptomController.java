@@ -1,9 +1,12 @@
 package com.example.analyzerofanalyses.web.controller;
 
 import com.example.analyzerofanalyses.domain.symptom.Symptom;
+import com.example.analyzerofanalyses.domain.symptom.SymptomImage;
 import com.example.analyzerofanalyses.service.SymptomService;
 import com.example.analyzerofanalyses.web.dto.symptom.SymptomDto;
+import com.example.analyzerofanalyses.web.dto.symptom.SymptomImageDto;
 import com.example.analyzerofanalyses.web.dto.validation.OnUpdate;
+import com.example.analyzerofanalyses.web.mappers.SymptomImageMapper;
 import com.example.analyzerofanalyses.web.mappers.SymptomMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -23,6 +26,7 @@ public class SymptomController {
     private final SymptomService symptomService;
 
     private final SymptomMapper symptomMapper;
+    private final SymptomImageMapper symptomImageMapper;
 
     @PutMapping
     @Operation(summary = "Update symptom")
@@ -48,5 +52,13 @@ public class SymptomController {
     @PreAuthorize("@customSecurityExpression.canAccessSymptom(#id)")
     public void deleteById(@PathVariable Long id) {
         symptomService.delete(id);
+    }
+
+    @PostMapping("/{id}/image")
+    @Operation(summary = "Upload image to symptom")
+    @PreAuthorize("@customSecurityExpression.canAccessSymptom(#id)")
+    public void uploadImage(@PathVariable Long id, @Validated @ModelAttribute SymptomImageDto imageDto) {
+        SymptomImage image = symptomImageMapper.toEntity(imageDto);
+        symptomService.uploadImage(id, image);
     }
 }

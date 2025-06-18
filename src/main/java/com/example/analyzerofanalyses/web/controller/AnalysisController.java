@@ -1,9 +1,12 @@
 package com.example.analyzerofanalyses.web.controller;
 
 import com.example.analyzerofanalyses.domain.analysis.Analysis;
+import com.example.analyzerofanalyses.domain.analysis.AnalysisImage;
 import com.example.analyzerofanalyses.service.AnalysisService;
 import com.example.analyzerofanalyses.web.dto.analysis.AnalysisDto;
+import com.example.analyzerofanalyses.web.dto.analysis.AnalysisImageDto;
 import com.example.analyzerofanalyses.web.dto.validation.OnUpdate;
+import com.example.analyzerofanalyses.web.mappers.AnalysisImageMapper;
 import com.example.analyzerofanalyses.web.mappers.AnalysisMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -23,6 +26,7 @@ public class AnalysisController {
     private final AnalysisService analysisService;
 
     private final AnalysisMapper analysisMapper;
+    private final AnalysisImageMapper analysisImageMapper;
 
     @PutMapping
     @Operation(summary = "Update analysis")
@@ -48,5 +52,13 @@ public class AnalysisController {
     @PreAuthorize("@customSecurityExpression.canAccessAnalysis(#id)")
     public void deleteById(@PathVariable Long id) {
         analysisService.delete(id);
+    }
+
+    @PostMapping("/{id}/image")
+    @Operation(summary = "Upload image to analysis")
+    @PreAuthorize("@customSecurityExpression.canAccessAnalysis(#id)")
+    public void uploadImage(@PathVariable Long id, @Validated @ModelAttribute AnalysisImageDto imageDto) {
+        AnalysisImage image = analysisImageMapper.toEntity(imageDto);
+        analysisService.uploadImage(id, image);
     }
 }

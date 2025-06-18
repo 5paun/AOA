@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.List;
 
 @Entity
 @Table(name = "symptoms")
@@ -17,4 +18,9 @@ public class Symptom implements Serializable {
     private String title;
     private String description;
     private String recommendation;
+
+    @Column(name = "image")
+    @CollectionTable(name = "symptoms_images")
+    @ElementCollection
+    private List<String> images;
 }
