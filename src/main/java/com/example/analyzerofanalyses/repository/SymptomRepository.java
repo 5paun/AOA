@@ -14,6 +14,6 @@ public interface SymptomRepository extends JpaRepository<Symptom, Long> {
         JOIN users_symptoms us ON us.symptom_id = s.id
         WHERE us.user_ud = :userId 
     """, nativeQuery = true)
-    List<Symptom> findAllByUserId(@Param("userId")  Long userId);
+    List<Symptom> findAllByUserId(@Param("userId") Long userId);
 
 }

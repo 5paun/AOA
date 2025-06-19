@@ -21,7 +21,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
         """, nativeQuery = true)
     boolean isSymptomOwner(@Param("userId") Long userId, @Param("symptomId") Long symptomId);
 
-    @Query(value= """
+    @Query(value = """
         SELECT exists (
                 SELECT 1
                 FROM users_analysis

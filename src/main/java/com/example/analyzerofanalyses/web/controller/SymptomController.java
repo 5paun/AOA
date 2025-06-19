@@ -11,15 +11,13 @@ import com.example.analyzerofanalyses.web.mappers.SymptomMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/symptoms")
-// в курсе не было onConstructor = @__(@Lazy), но это исправляет ошибку с маппером
-@RequiredArgsConstructor(onConstructor = @__(@Lazy))
+@RequiredArgsConstructor
 @Validated
 @Tag(name = "Symptom controller", description = "Symptom API")
 public class SymptomController {

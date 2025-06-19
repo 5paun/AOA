@@ -6,7 +6,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
-import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -20,25 +19,21 @@ public class JwtEntity implements UserDetails {
 
     @Override
     public boolean isAccountNonExpired() {
-        // true
         return UserDetails.super.isAccountNonExpired();
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        // true
         return UserDetails.super.isAccountNonLocked();
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        // true
         return UserDetails.super.isCredentialsNonExpired();
     }
 
     @Override
     public boolean isEnabled() {
-        // true
         return UserDetails.super.isEnabled();
     }
 }
