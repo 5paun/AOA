@@ -1,6 +1,10 @@
 package com.example.analyzerofanalyses.web.controller;
 
-import com.example.analyzerofanalyses.domain.exception.*;
+import com.example.analyzerofanalyses.domain.exception.AccessDeniedException;
+import com.example.analyzerofanalyses.domain.exception.ExceptionBody;
+import com.example.analyzerofanalyses.domain.exception.ImageUploadException;
+import com.example.analyzerofanalyses.domain.exception.ResourceMappingException;
+import com.example.analyzerofanalyses.domain.exception.ResourceNotFoundException;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -20,7 +24,9 @@ public class ControllerAdvice {
 
     @ExceptionHandler(ResourceNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ExceptionBody handleResourceNotFound(ResourceNotFoundException e) {
+    public ExceptionBody handleResourceNotFound(
+            final ResourceNotFoundException e
+    ) {
         log.error(e.getMessage(), e);
 
         return new ExceptionBody(e.getMessage());
@@ -28,7 +34,9 @@ public class ControllerAdvice {
 
     @ExceptionHandler(ResourceMappingException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ExceptionBody handleResourceMapping(ResourceMappingException e) {
+    public ExceptionBody handleResourceMapping(
+            final ResourceMappingException e
+    ) {
         log.error(e.getMessage(), e);
 
         return new ExceptionBody(e.getMessage());
@@ -36,13 +44,16 @@ public class ControllerAdvice {
 
     @ExceptionHandler(IllegalStateException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ExceptionBody handleIllegalState(IllegalStateException e) {
+    public ExceptionBody handleIllegalState(final IllegalStateException e) {
         log.error(e.getMessage(), e);
 
         return new ExceptionBody(e.getMessage());
     }
 
-    @ExceptionHandler({AccessDeniedException.class, org.springframework.security.access.AccessDeniedException.class})
+    @ExceptionHandler({
+            AccessDeniedException.class,
+            org.springframework.security.access.AccessDeniedException.class
+    })
     @ResponseStatus(HttpStatus.FORBIDDEN)
     public ExceptionBody handleAccessDenied() {
 
@@ -51,34 +62,44 @@ public class ControllerAdvice {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ExceptionBody handleMethodArgumentNotValid(MethodArgumentNotValidException e) {
+    public ExceptionBody handleMethodArgumentNotValid(
+            final MethodArgumentNotValidException e
+    ) {
         log.error(e.getMessage(), e);
 
         ExceptionBody exceptionBody = new ExceptionBody("validation failed");
         List<FieldError> errors = e.getBindingResult().getFieldErrors();
         exceptionBody.setErrors(errors.stream()
-                .collect(Collectors.toMap(FieldError::getField, FieldError::getDefaultMessage)));
+                .collect(Collectors.toMap(
+                        FieldError::getField,
+                        FieldError::getDefaultMessage,
+                        (existingMessage, newMessage) ->
+                                existingMessage + " " + newMessage
+                )));
 
         return exceptionBody;
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ExceptionBody handleConstraintViolation(ConstraintViolationException e) {
+    public ExceptionBody handleConstraintViolation(
+            final ConstraintViolationException e
+    ) {
         log.error(e.getMessage(), e);
 
         ExceptionBody exceptionBody = new ExceptionBody("validation failed");
-        exceptionBody.setErrors(e.getConstraintViolations().stream().collect(Collectors.toMap(
-                violation -> violation.getPropertyPath().toString(),
-                violation -> violation.getMessage()
-        )));
+        exceptionBody.setErrors(
+                e.getConstraintViolations().stream().collect(Collectors.toMap(
+                        violation -> violation.getPropertyPath().toString(),
+                        violation -> violation.getMessage()
+                )));
 
         return exceptionBody;
     }
 
     @ExceptionHandler(AuthenticationException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ExceptionBody handleAuthentication(AuthenticationException e) {
+    public ExceptionBody handleAuthentication(final AuthenticationException e) {
         log.error(e.getMessage(), e);
 
         return new ExceptionBody("Authentication failed.");
@@ -86,7 +107,7 @@ public class ControllerAdvice {
 
     @ExceptionHandler(ImageUploadException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ExceptionBody handleImageUpload(ImageUploadException e) {
+    public ExceptionBody handleImageUpload(final ImageUploadException e) {
         log.error(e.getMessage(), e);
 
         return new ExceptionBody(e.getMessage());
@@ -94,7 +115,7 @@ public class ControllerAdvice {
 
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ExceptionBody handleException(Exception e) {
+    public ExceptionBody handleException(final Exception e) {
         log.error(e.getMessage(), e);
 
         return new ExceptionBody("Internal error.");

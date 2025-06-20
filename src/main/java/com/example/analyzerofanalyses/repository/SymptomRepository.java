@@ -10,10 +10,10 @@ import java.util.List;
 public interface SymptomRepository extends JpaRepository<Symptom, Long> {
 
     @Query(value = """
-        SELECT * FROM symptoms s
-        JOIN users_symptoms us ON us.symptom_id = s.id
-        WHERE us.user_ud = :userId 
-    """, nativeQuery = true)
+                SELECT * FROM symptoms s
+                JOIN users_symptoms us ON us.symptom_id = s.id
+                WHERE us.user_id = :userId
+            """, nativeQuery = true)
     List<Symptom> findAllByUserId(@Param("userId") Long userId);
 
 }

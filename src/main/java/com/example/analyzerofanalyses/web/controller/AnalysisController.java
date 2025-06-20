@@ -13,7 +13,15 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/v1/analyses")
@@ -29,7 +37,9 @@ public class AnalysisController {
     @PutMapping
     @Operation(summary = "Update analysis")
     @PreAuthorize("@customSecurityExpression.canAccessAnalysis(#dto.id)")
-    public AnalysisDto update(@Validated(OnUpdate.class) @RequestBody AnalysisDto dto) {
+    public AnalysisDto update(
+            @Validated(OnUpdate.class) @RequestBody final AnalysisDto dto
+    ) {
         Analysis analysis = analysisMapper.toEntity(dto);
         Analysis updatedAnalysis = analysisService.update(analysis);
 
@@ -39,7 +49,7 @@ public class AnalysisController {
     @GetMapping("/{id}")
     @Operation(summary = "Get AnalysisDto by id")
     @PreAuthorize("@customSecurityExpression.canAccessAnalysis(#id)")
-    public AnalysisDto getById(@PathVariable Long id) {
+    public AnalysisDto getById(@PathVariable final Long id) {
         Analysis analysis = analysisService.getById(id);
 
         return analysisMapper.toDto(analysis);
@@ -48,14 +58,17 @@ public class AnalysisController {
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete analysis  user")
     @PreAuthorize("@customSecurityExpression.canAccessAnalysis(#id)")
-    public void deleteById(@PathVariable Long id) {
+    public void deleteById(@PathVariable final Long id) {
         analysisService.delete(id);
     }
 
     @PostMapping("/{id}/image")
     @Operation(summary = "Upload image to analysis")
     @PreAuthorize("@customSecurityExpression.canAccessAnalysis(#id)")
-    public void uploadImage(@PathVariable Long id, @Validated @ModelAttribute AnalysisImageDto imageDto) {
+    public void uploadImage(
+            @PathVariable final Long id,
+            @Validated @ModelAttribute final AnalysisImageDto imageDto
+    ) {
         AnalysisImage image = analysisImageMapper.toEntity(imageDto);
         analysisService.uploadImage(id, image);
     }

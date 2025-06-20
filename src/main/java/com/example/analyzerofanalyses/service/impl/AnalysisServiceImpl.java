@@ -28,20 +28,22 @@ public class AnalysisServiceImpl implements AnalysisService {
     @Override
     @Transactional(readOnly = true)
     @Cacheable(value = "AnalysisService::getById", key = "#id")
-    public Analysis getById(Long id) {
-        return analysisRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Analysis not found."));
+    public Analysis getById(final Long id) {
+        return analysisRepository.findById(id)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Analysis not found."));
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<Analysis> getAllByUserId(Long id) {
+    public List<Analysis> getAllByUserId(final Long id) {
         return analysisRepository.findAllByUserId(id);
     }
 
     @Override
     @Transactional
     @CachePut(value = "AnalysisService::getById::getById", key = "#analysis.id")
-    public Analysis update(Analysis analysis) {
+    public Analysis update(final Analysis analysis) {
         analysisRepository.save(analysis);
 
         return analysis;
@@ -50,7 +52,7 @@ public class AnalysisServiceImpl implements AnalysisService {
     @Override
     @Transactional
     @Cacheable(value = "AnalysisService::getById", key = "#analysis.id")
-    public Analysis create(Analysis analysis, Long userId) {
+    public Analysis create(final Analysis analysis, final Long userId) {
         User user = userService.getById(userId);
         user.getAnalyses().add(analysis);
         userService.update(user);
@@ -61,14 +63,14 @@ public class AnalysisServiceImpl implements AnalysisService {
     @Override
     @Transactional
     @CacheEvict(value = "AnalysisService::getById", key = "#id")
-    public void delete(Long id) {
+    public void delete(final Long id) {
         analysisRepository.deleteById(id);
     }
 
     @Override
     @Transactional
     @CacheEvict(value = "AnalysisService::getById", key = "#id")
-    public void uploadImage(Long id, AnalysisImage image) {
+    public void uploadImage(final Long id, final AnalysisImage image) {
         Analysis analysis = getById(id);
         String fileName = imageService.upload(image);
         analysis.getImages().add(fileName);

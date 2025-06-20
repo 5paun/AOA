@@ -41,7 +41,11 @@ public class JwtTokenProvider {
         this.key = Keys.hmacShaKeyFor(jwtProperties.getSecret().getBytes());
     }
 
-    public String createAccessToken(Long userId, String email, Set<Role> roles) {
+    public String createAccessToken(
+            final Long userId,
+            final String email,
+            final Set<Role> roles
+    ) {
         Claims claims = Jwts.claims().subject(email)
                 .add("id", userId)
                 .add("roles", resolveRoles((roles)))
@@ -56,13 +60,13 @@ public class JwtTokenProvider {
                 .compact();
     }
 
-    private List<String> resolveRoles(Set<Role> roles) {
+    private List<String> resolveRoles(final Set<Role> roles) {
         return roles.stream()
                 .map(Enum::name)
                 .collect(Collectors.toList());
     }
 
-    public String createRefreshToken(Long userId, String email) {
+    public String createRefreshToken(final Long userId, final String email) {
         Claims claims = Jwts.claims().subject(email)
                 .add("id", userId)
                 .build();
@@ -76,7 +80,7 @@ public class JwtTokenProvider {
                 .compact();
     }
 
-    public JwtResponse refreshUserTokens(String refreshToken) {
+    public JwtResponse refreshUserTokens(final String refreshToken) {
         JwtResponse jwtResponse = new JwtResponse();
 
         if (!validateToken(refreshToken)) {
@@ -87,13 +91,17 @@ public class JwtTokenProvider {
         User user = userService.getById(userId);
         jwtResponse.setId(userId);
         jwtResponse.setEmail(user.getEmail());
-        jwtResponse.setAccessToken(createAccessToken(userId, user.getEmail(), user.getRoles()));
-        jwtResponse.setRefreshToken(createRefreshToken(userId, user.getEmail()));
+        jwtResponse.setAccessToken(
+                createAccessToken(userId, user.getEmail(), user.getRoles())
+        );
+        jwtResponse.setRefreshToken(
+                createRefreshToken(userId, user.getEmail())
+        );
 
         return jwtResponse;
     }
 
-    public boolean validateToken(String token) {
+    public boolean validateToken(final String token) {
         Jws<Claims> claims = Jwts
                 .parser()
                 .setSigningKey(key)
@@ -103,7 +111,7 @@ public class JwtTokenProvider {
         return !claims.getBody().getExpiration().before(new Date());
     }
 
-    private String getId(String token) {
+    private String getId(final String token) {
         return Jwts
                 // в курсе был parserBuilder
                 .parser()
@@ -115,7 +123,7 @@ public class JwtTokenProvider {
                 .toString();
     }
 
-    private String getUsername(String token) {
+    private String getUsername(final String token) {
         return Jwts
                 .parser()
                 .setSigningKey(key)
@@ -125,10 +133,15 @@ public class JwtTokenProvider {
                 .getSubject();
     }
 
-    public Authentication getAuthentication(String token) {
+    public Authentication getAuthentication(final String token) {
         String username = getUsername(token);
-        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+        UserDetails userDetails = userDetailsService
+                .loadUserByUsername(username);
 
-        return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
+        return new UsernamePasswordAuthenticationToken(
+                userDetails,
+                "",
+                userDetails.getAuthorities()
+        );
     }
 }
