@@ -57,19 +57,20 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @Caching(cacheable = {
-            @Cacheable(
-                    value = "UserService::getById",
-                    key = "#user.id"
-            ),
-            @Cacheable(
-                    value = "UserService::getByUsername",
-                    key = "#user.email"
-            )
-    })
+//    @todo с кешированием вылетает 500
+//    @Caching(cacheable = {
+//            @Cacheable(
+//                    value = "UserService::getById",
+//                    key = "#user.id"
+//            ),
+//            @Cacheable(
+//                    value = "UserService::getByEmail",
+//                    key = "#user.email"
+//            )
+//    })
     public User create(final User user) {
         if (userRepository.findByEmail(user.getEmail()).isPresent()) {
-            throw new IllegalStateException("User already exists.");
+            throw new IllegalStateException("Email already exists.");
         }
 
         if (!user.getPassword().equals(user.getPasswordConfirmation())) {

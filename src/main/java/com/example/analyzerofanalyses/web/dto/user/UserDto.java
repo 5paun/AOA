@@ -29,7 +29,7 @@ public class UserDto {
     )
     private String name;
 
-    @Schema(description = "User email ", example = "1")
+    @Schema(description = "User email ", example = "test@mail.ru")
     @NotNull(
             message = "Email must be not null.",
             groups = {OnCreate.class, OnUpdate.class}

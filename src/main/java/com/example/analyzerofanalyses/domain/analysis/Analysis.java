@@ -24,8 +24,8 @@ public class Analysis implements Serializable {
     private Long id;
 
     private String title;
-    private float totalCholesterol;
-    private float whiteBloodCells;
+    private double totalCholesterol;
+    private double whiteBloodCells;
     private int lymphocytes;
     private LocalDateTime createdDate;
 

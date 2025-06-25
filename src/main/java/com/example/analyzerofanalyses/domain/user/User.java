@@ -30,7 +30,7 @@ import java.util.Set;
 public class User implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String name;
@@ -48,7 +48,7 @@ public class User implements Serializable {
 
     @CollectionTable(name = "users_symptoms")
     @ManyToMany
-    @JoinTable(name = "symptom_Id")
+    @JoinTable(name = "symptom_id")
     private List<Symptom> symptoms;
 
     @CollectionTable(name = "users_analysis")
