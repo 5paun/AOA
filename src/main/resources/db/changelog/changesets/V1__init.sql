@@ -65,6 +65,14 @@ create table if not exists symptoms
 )
     );
 
+create table if not exists users_analyses
+(
+    user_id bigint not null,
+    analysis_id bigint not null,
+    primary key (user_id, analysis_id),
+    constraint fk_users_analyses_users foreign key (user_id) references users (id) on delete cascade on update no action,
+    constraint fk_users_analyses_analyses foreign key (analysis_id) references analyses (id) on delete cascade on update no action);
+
 create table if not exists users_symptoms
 (
     user_id

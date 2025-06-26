@@ -27,7 +27,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query(value = """
                 SELECT exists (
                         SELECT 1
-                        FROM users_analysis
+                        FROM users_analyses
                         WHERE user_id = :userId
                         AND analysis_id = :analysisId
                     )

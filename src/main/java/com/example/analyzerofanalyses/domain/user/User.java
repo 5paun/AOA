@@ -46,14 +46,12 @@ public class User implements Serializable {
     @Enumerated(value = EnumType.STRING)
     private Set<Role> roles;
 
-    @CollectionTable(name = "users_symptoms")
     @ManyToMany
-    @JoinTable(name = "symptom_id")
+    @JoinTable(inverseJoinColumns = @JoinColumn(name = "symptom_id"))
     private List<Symptom> symptoms;
 
-    @CollectionTable(name = "users_analysis")
     @OneToMany
-    @JoinColumn(name = "analysis_id")
+    @JoinTable(inverseJoinColumns = @JoinColumn(name = "analysis_id"))
     private List<Analysis> analyses;
 
 }

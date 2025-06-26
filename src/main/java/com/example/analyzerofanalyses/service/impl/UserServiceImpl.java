@@ -10,6 +10,7 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -51,9 +52,14 @@ public class UserServiceImpl implements UserService {
     })
     public User update(final User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        userRepository.save(user);
 
-        return user;
+        try {
+            userRepository.save(user);
+
+            return user;
+        } catch (Exception e) {
+            throw new ResourceNotFoundException("User not found: " + e.getMessage());
+        }
     }
 
     @Override
