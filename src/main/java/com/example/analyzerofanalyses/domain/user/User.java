@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Set;
 
 @Entity
-@Table(name = "users")
+@Table(name = "client")
 @Data
 public class User implements Serializable {
 
@@ -42,16 +42,16 @@ public class User implements Serializable {
 
     @Column(name = "role")
     @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "users_roles")
+    @CollectionTable(name = "client_role", joinColumns = @JoinColumn(name = "client_id"))
     @Enumerated(value = EnumType.STRING)
     private Set<Role> roles;
 
     @ManyToMany
-    @JoinTable(inverseJoinColumns = @JoinColumn(name = "symptom_id"))
+    @JoinTable(name = "client_symptom", joinColumns = @JoinColumn(name = "client_id"), inverseJoinColumns = @JoinColumn(name = "symptom_id"))
     private List<Symptom> symptoms;
 
     @OneToMany
-    @JoinTable(inverseJoinColumns = @JoinColumn(name = "analysis_id"))
+    @JoinColumn(name = "id")
     private List<Analysis> analyses;
 
 }

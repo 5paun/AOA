@@ -37,6 +37,8 @@ public class AnalysisServiceImpl implements AnalysisService {
     @Override
     @Transactional(readOnly = true)
     public List<Analysis> getAllByUserId(final Long id) {
+        userService.getById(id);
+
         return analysisRepository.findAllByUserId(id);
     }
 

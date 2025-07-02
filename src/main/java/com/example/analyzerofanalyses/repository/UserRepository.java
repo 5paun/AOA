@@ -14,8 +14,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query(value = """
              SELECT exists (
                     SELECT 1
-                    FROM users_symptoms
-                    WHERE user_id = :userId
+                    FROM client_symptom
+                    WHERE client_id = :userId
                     AND symptom_id = :symptomId
                 )
             """, nativeQuery = true)
@@ -27,8 +27,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query(value = """
                 SELECT exists (
                         SELECT 1
-                        FROM users_analyses
-                        WHERE user_id = :userId
+                        FROM client_analysis
+                        WHERE client_id = :userId
                         AND analysis_id = :analysisId
                     )
             """, nativeQuery = true)

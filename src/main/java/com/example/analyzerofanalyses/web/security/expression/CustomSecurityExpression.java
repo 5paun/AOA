@@ -1,6 +1,8 @@
 package com.example.analyzerofanalyses.web.security.expression;
 
+import com.example.analyzerofanalyses.domain.symptom.Symptom;
 import com.example.analyzerofanalyses.domain.user.Role;
+import com.example.analyzerofanalyses.service.SymptomService;
 import com.example.analyzerofanalyses.service.UserService;
 import com.example.analyzerofanalyses.web.security.JwtEntity;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +16,7 @@ import org.springframework.stereotype.Service;
 public class CustomSecurityExpression {
 
     private final UserService userService;
+    private final SymptomService symptomService;
 
     public boolean canAccessUser(final Long id) {
         Authentication authentication = SecurityContextHolder
@@ -50,8 +53,9 @@ public class CustomSecurityExpression {
 
         JwtEntity user = (JwtEntity) authentication.getPrincipal();
         Long userId = user.getId();
+        Symptom symptom = symptomService.getById(symptomId);
 
-        return userService.isSymptomOwner(userId, symptomId);
+        return userService.isSymptomOwner(userId, symptom.getId());
     }
 
     public boolean canAccessAnalysis(final Long analysisId) {

@@ -7,14 +7,12 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.Table;
 import lombok.Data;
 
 import java.io.Serializable;
 import java.util.List;
 
 @Entity
-@Table(name = "symptoms")
 @Data
 public class Symptom implements Serializable {
 
@@ -27,7 +25,7 @@ public class Symptom implements Serializable {
     private String recommendation;
 
     @Column(name = "image")
-    @CollectionTable(name = "symptoms_images")
+    @CollectionTable(name = "symptom_image")
     @ElementCollection
     private List<String> images;
 }

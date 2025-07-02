@@ -32,8 +32,8 @@ public class AnalysisDto {
     private float whiteBloodCells;
     private int lymphocytes;
 
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-    @JsonFormat(pattern = "yyyy-MM-dd")
+    @DateTimeFormat(iso = DateTimeFormat.ISO.TIME)
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
     private LocalDateTime createdDate;
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)

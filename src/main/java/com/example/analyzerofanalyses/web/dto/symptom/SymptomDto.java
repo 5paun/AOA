@@ -26,10 +26,6 @@ public class SymptomDto {
     )
     private String title;
 
-    @NotNull(
-            message = "Description must be not null.",
-            groups = {OnCreate.class, OnUpdate.class}
-    )
     @Length(
             max = 500,
             message = "Description length must be smaller than 500 symbols",
@@ -37,10 +33,6 @@ public class SymptomDto {
     )
     private String description;
 
-    @NotNull(
-            message = "Recommendation must be not null.",
-            groups = {OnCreate.class, OnUpdate.class}
-    )
     @Length(
             max = 1000,
             message = "Recommendation length must be smaller than 1000 symbols",

@@ -10,11 +10,11 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -23,6 +23,7 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+//    private final SymptomServiceFacade symptomServiceFacade;
 
     @Override
     @Transactional(readOnly = true)
@@ -51,15 +52,17 @@ public class UserServiceImpl implements UserService {
             @CachePut(value = "UserService::getByEmail", key = "#user.email")
     })
     public User update(final User user) {
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        Long userId = user.getId();
+        getById(userId);
 
-        try {
-            userRepository.save(user);
-
-            return user;
-        } catch (Exception e) {
-            throw new ResourceNotFoundException("User not found: " + e.getMessage());
+        if (isEmailExist(user.getEmail(), userId)) {
+            throw new IllegalStateException("Email already exists.");
         }
+
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        userRepository.save(user);
+
+        return user;
     }
 
     @Override
@@ -75,7 +78,7 @@ public class UserServiceImpl implements UserService {
 //            )
 //    })
     public User create(final User user) {
-        if (userRepository.findByEmail(user.getEmail()).isPresent()) {
+        if (isEmailExist(user.getEmail(), user.getId())) {
             throw new IllegalStateException("Email already exists.");
         }
 
@@ -95,11 +98,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    @Cacheable(
-            value = "UserService::isSymptomOwner",
-            key = "#userId + '.' + #symptomId"
-    )
+//    @Cacheable(
+//            value = "UserService::isSymptomOwner",
+//            key = "#userId + '.' + #symptomId"
+//    )
     public boolean isSymptomOwner(final Long userId, final Long symptomId) {
+//        return symptomServiceFacade.isSymptomOwner(userId, symptomId);
         return userRepository.isSymptomOwner(userId, symptomId);
     }
 
@@ -116,6 +120,13 @@ public class UserServiceImpl implements UserService {
     @Override
     @CacheEvict(value = "UserService.getById", key = "#id")
     public void delete(final Long id) {
+        getById(id);
         userRepository.deleteById(id);
+    }
+
+    private boolean isEmailExist(final String email, final Long id) {
+        Optional<User> user = userRepository.findByEmail(email);
+
+        return user.isPresent() && !user.get().getId().equals(id);
     }
 }

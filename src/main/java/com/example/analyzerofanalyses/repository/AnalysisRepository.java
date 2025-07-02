@@ -8,9 +8,9 @@ import java.util.List;
 
 public interface AnalysisRepository extends JpaRepository<Analysis, Long> {
     @Query(value = """
-                SELECT * FROM analyses a
-                JOIN users_analyses us ON ua.analysis_id = a.id
-                WHERE us.user_id = :userId
+                SELECT * FROM analysis a
+                JOIN client_analysis ca ON ca.analysis_id = a.id
+                WHERE ca.client_id = :userId
             """, nativeQuery = true)
     List<Analysis> findAllByUserId(Long userId);
 

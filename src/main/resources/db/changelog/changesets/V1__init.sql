@@ -1,177 +1,65 @@
-create table if not exists users
+create table if not exists client
 (
-    id
-    bigserial
-    primary
-    key,
-    name
-    varchar
-(
-    255
-) not null,
-    email varchar
-(
-    255
-) not null unique,
-    password varchar
-(
-    255
-) not null
-    );
+    id bigserial primary key,
+    name varchar(255) not null,
+    email varchar(255) not null unique,
+    password varchar(255) not null
+);
 
-create table if not exists analyses
+create table if not exists analysis
 (
-    id
-    bigserial
-    primary
-    key,
-    title
-    varchar
-(
-    255
-) not null,
-    total_cholesterol NUMERIC
-(
-    3,
-    1
-),
-    white_blood_cells NUMERIC
-(
-    2,
-    1
-),
+    id bigserial primary key,
+    title varchar(255) not null,
+    total_cholesterol NUMERIC(3, 1),
+    white_blood_cells NUMERIC(2, 1),
     lymphocytes INTEGER,
     created_date timestamp not null
-    );
+);
 
-create table if not exists symptoms
+create table if not exists symptom
 (
-    id
-    bigserial
-    primary
-    key,
-    title
-    varchar
-(
-    50
-) not null,
-    description varchar
-(
-    500
-),
-    recommendation varchar
-(
-    1000
-)
-    );
+    id bigserial primary key,
+    title varchar(50) not null,
+    description varchar(500),
+    recommendation varchar(1000)
+);
 
-create table if not exists users_analyses
+create table if not exists client_analysis
 (
-    user_id bigint not null,
+    client_id bigint not null,
     analysis_id bigint not null,
-    primary key (user_id, analysis_id),
-    constraint fk_users_analyses_users foreign key (user_id) references users (id) on delete cascade on update no action,
-    constraint fk_users_analyses_analyses foreign key (analysis_id) references analyses (id) on delete cascade on update no action);
+    primary key (client_id, analysis_id),
+    constraint fk_client_analysis_client foreign key (client_id) references client (id) on delete cascade on update no action,
+    constraint fk_client_analysis_analysis foreign key (analysis_id) references analysis (id) on delete cascade on update no action
+);
 
-create table if not exists users_symptoms
+create table if not exists client_symptom
 (
-    user_id
-    bigint
-    not
-    null,
-    symptom_id
-    bigint
-    not
-    null,
-    primary
-    key
-(
-    user_id,
-    symptom_id
-),
-    constraint fk_users_symptoms_users foreign key
-(
-    user_id
-) references users
-(
-    id
-) on delete cascade
-  on update no action,
-    constraint fk_users_symptoms_symptoms foreign key
-(
-    symptom_id
-) references symptoms
-(
-    id
-)
-  on delete cascade
-  on update no action
-    );
+    client_id bigint not null,
+    symptom_id bigint not null,
+    primary key (client_id, symptom_id),
+    constraint fk_client_symptom_client foreign key (client_id) references client (id) on delete cascade on update no action,
+    constraint fk_client_symptom_symptom foreign key (symptom_id) references symptom (id) on delete cascade on update no action
+);
 
-create table if not exists users_roles
+create table if not exists client_role
 (
-    user_id
-    bigint
-    not
-    null,
-    role
-    varchar
-(
-    255
-) not null,
-    primary key
-(
-    user_id,
-    role
-),
-    constraint fk_users_roles_users foreign key
-(
-    user_id
-) references users
-(
-    id
-) on delete cascade
-  on update no action
-    );
+    client_id bigint not null,
+    role varchar(255) not null,
+    primary key (client_id, role),
+    constraint fk_client_role_client foreign key (client_id) references client (id) on delete cascade on update no action
+);
 
-create table if not exists analyses_images
+create table if not exists analysis_image
 (
-    analysis_id
-    bigint
-    not
-    null,
-    image
-    varchar
-(
-    255
-) not null,
-    constraint fk_analyses_images_analyses foreign key
-(
-    analysis_id
-) references analyses
-(
-    id
-) on delete cascade
-  on update no action
-    );
+    analysis_id bigint not null,
+    image varchar(255) not null,
+    constraint fk_analysis_image_analysis foreign key (analysis_id) references analysis (id) on delete cascade on update no action
+);
 
-create table if not exists symptoms_images
+create table if not exists symptom_image
 (
-    symptom_id
-    bigint
-    not
-    null,
-    image
-    varchar
-(
-    255
-) not null,
-    constraint fk_symptoms_images_symptoms foreign key
-(
-    symptom_id
-) references symptoms
-(
-    id
-) on delete cascade
-  on update no action
-    );
+    symptom_id bigint not null,
+    image varchar(255) not null,
+    constraint fk_symptom_image_symptom foreign key (symptom_id) references symptom (id) on delete cascade on update no action
+);

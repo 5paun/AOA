@@ -20,23 +20,29 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class SymptomServiceImpl implements SymptomService {
+
     private final SymptomRepository symptomRepository;
     private final UserService userService;
     private final ImageService imageService;
 
     @Override
     @Transactional(readOnly = true)
-    @Cacheable(value = "SymptomService::getById", key = "#id")
+//    @todo с кешированием вылетает 500
+//    @Cacheable(value = "SymptomService::getById", key = "#id")
     public Symptom getById(final Long id) {
         return symptomRepository.findById(id)
                 .orElseThrow(() ->
-                        new ResourceNotFoundException("symptom not found."));
+                        new ResourceNotFoundException("Symptom not found."));
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<Symptom> getAllByUserId(final Long id) {
-        return symptomRepository.findAllByUserId(id);
+//        return symptomServiceFacade.getAllByUserId(id);
+        User user = userService.getById(id);
+
+        return symptomRepository.findAllByUserId(user.getId());
+
     }
 
     @Override
@@ -52,6 +58,7 @@ public class SymptomServiceImpl implements SymptomService {
     @Transactional
     @Cacheable(value = "SymptomService::getById", key = "#symptom.id")
     public Symptom create(final Symptom symptom, final Long userId) {
+//        return symptomServiceFacade.createSymptom(symptom, userId);
         User user = userService.getById(userId);
         user.getSymptoms().add(symptom);
         userService.update(user);

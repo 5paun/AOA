@@ -7,7 +7,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.Table;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -15,7 +14,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
-@Table(name = "analyses")
 @Data
 public class Analysis implements Serializable {
 
@@ -30,7 +28,7 @@ public class Analysis implements Serializable {
     private LocalDateTime createdDate;
 
     @Column(name = "image")
-    @CollectionTable(name = "analyses_images")
+    @CollectionTable(name = "analysis_image")
     @ElementCollection
     private List<String> images;
 }
