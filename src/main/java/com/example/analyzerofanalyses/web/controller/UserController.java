@@ -83,18 +83,24 @@ public class UserController {
         return symptomMapper.toDto(symptoms);
     }
 
-    @PostMapping("/{id}/symptoms")
+    @PostMapping("/{id}/symptoms/{symptomId}")
     @Operation(summary = "Add symptom to user")
     @PreAuthorize("@customSecurityExpression.canAccessUser(#id)")
-    public SymptomDto createSymptom(
+    public Symptom assignSymptom(
             @PathVariable final Long id,
-            @Validated(OnCreate.class) @RequestBody final SymptomDto dto
+            @PathVariable final Long symptomId
     ) {
-        Symptom symptom = symptomMapper.toEntity(dto);
-//        Symptom createdSymptoms = symptomServiceFacade.createSymptom(symptom, id);
-        Symptom createdSymptoms = symptomService.create(symptom, id);
+        return symptomService.assignSymptomToUser(symptomId, id);
+    }
 
-        return symptomMapper.toDto(createdSymptoms);
+    @DeleteMapping("/{id}/symptoms/{symptomId}")
+    @Operation(summary = "Delete symptom from user")
+    @PreAuthorize("@customSecurityExpression.canAccessUser(#id)")
+    public void unassignSymptom(
+            @PathVariable final Long id,
+            @PathVariable final Long symptomId
+    ) {
+        symptomService.unassignSymptomFromUser(symptomId, id);
     }
 
     @GetMapping("/{id}/analyses")

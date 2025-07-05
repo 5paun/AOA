@@ -1,7 +1,8 @@
 package com.example.analyzerofanalyses.web.security.expression;
 
-import com.example.analyzerofanalyses.domain.symptom.Symptom;
+import com.example.analyzerofanalyses.domain.analysis.Analysis;
 import com.example.analyzerofanalyses.domain.user.Role;
+import com.example.analyzerofanalyses.service.AnalysisService;
 import com.example.analyzerofanalyses.service.SymptomService;
 import com.example.analyzerofanalyses.service.UserService;
 import com.example.analyzerofanalyses.web.security.JwtEntity;
@@ -17,16 +18,27 @@ public class CustomSecurityExpression {
 
     private final UserService userService;
     private final SymptomService symptomService;
+    private final AnalysisService analysisService;
 
-    public boolean canAccessUser(final Long id) {
-        Authentication authentication = SecurityContextHolder
+    public Authentication getAuthentication() {
+        return SecurityContextHolder
                 .getContext()
                 .getAuthentication();
+    }
 
+    public Long getUserIdByToken() {
+        Authentication authentication = getAuthentication();
         JwtEntity user = (JwtEntity) authentication.getPrincipal();
-        Long userId = user.getId();
 
-        return userId.equals(id) || hasAnyRole(authentication, Role.ROLE_ADMIN);
+        return user.getId();
+    }
+
+    public boolean canAccessUser(final Long id) {
+        Authentication authentication = getAuthentication();
+
+        Long userId = getUserIdByToken();
+
+        return userId.equals(id) || hasAnyRole(authentication, Role.ROLE_ADMIN, Role.ROLE_USER);
     }
 
     private boolean hasAnyRole(
@@ -46,26 +58,16 @@ public class CustomSecurityExpression {
         return false;
     }
 
-    public boolean canAccessSymptom(final Long symptomId) {
-        Authentication authentication = SecurityContextHolder
-                .getContext()
-                .getAuthentication();
+    public boolean canAccessSymptom() {
+        Authentication authentication = getAuthentication();
 
-        JwtEntity user = (JwtEntity) authentication.getPrincipal();
-        Long userId = user.getId();
-        Symptom symptom = symptomService.getById(symptomId);
-
-        return userService.isSymptomOwner(userId, symptom.getId());
+        return hasAnyRole(authentication, Role.ROLE_ADMIN, Role.ROLE_DOCTOR);
     }
 
     public boolean canAccessAnalysis(final Long analysisId) {
-        Authentication authentication = SecurityContextHolder
-                .getContext()
-                .getAuthentication();
+        Long userId = getUserIdByToken();
+        Analysis analysis = analysisService.getById(analysisId);
 
-        JwtEntity user = (JwtEntity) authentication.getPrincipal();
-        Long userId = user.getId();
-
-        return userService.isAnalysisOwner(userId, analysisId);
+        return userService.isAnalysisOwner(userId, analysis.getId());
     }
 }

@@ -27,8 +27,14 @@ public class SymptomServiceImpl implements SymptomService {
 
     @Override
     @Transactional(readOnly = true)
-//    @todo с кешированием вылетает 500
-//    @Cacheable(value = "SymptomService::getById", key = "#id")
+    public List<Symptom> getAll() {
+        return symptomRepository.findAll();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    // @todo с кешированием вылетает 500
+    // @Cacheable(value = "SymptomService::getById", key = "#id")
     public Symptom getById(final Long id) {
         return symptomRepository.findById(id)
                 .orElseThrow(() ->
@@ -49,6 +55,7 @@ public class SymptomServiceImpl implements SymptomService {
     @Transactional
     @CachePut(value = "SymptomService::getById", key = "#symptom.id")
     public Symptom update(final Symptom symptom) {
+        getById(symptom.getId());
         symptomRepository.save(symptom);
 
         return symptom;
@@ -56,12 +63,9 @@ public class SymptomServiceImpl implements SymptomService {
 
     @Override
     @Transactional
-    @Cacheable(value = "SymptomService::getById", key = "#symptom.id")
-    public Symptom create(final Symptom symptom, final Long userId) {
-//        return symptomServiceFacade.createSymptom(symptom, userId);
-        User user = userService.getById(userId);
-        user.getSymptoms().add(symptom);
-        userService.update(user);
+//    @Cacheable(value = "SymptomService::getById", key = "#symptom.id")
+    public Symptom create(final Symptom symptom) {
+        symptomRepository.save(symptom);
 
         return symptom;
     }
@@ -70,6 +74,7 @@ public class SymptomServiceImpl implements SymptomService {
     @Transactional
     @CacheEvict(value = "SymptomService::getById", key = "#id")
     public void delete(final Long id) {
+        getById(id);
         symptomRepository.deleteById(id);
     }
 
@@ -81,5 +86,23 @@ public class SymptomServiceImpl implements SymptomService {
         String fileName = imageService.upload(image);
         symptom.getImages().add(fileName);
         symptomRepository.save(symptom);
+    }
+
+    @Override
+    @Transactional
+    public Symptom assignSymptomToUser(final Long symptomId, final Long userId) {
+        Symptom symptom = getById(symptomId);
+        User user = userService.getById(userId);
+        user.getSymptoms().add(symptom);
+
+        return symptom;
+    }
+
+    @Override
+    @Transactional
+    public void unassignSymptomFromUser(final Long symptomId, final Long userId) {
+        Symptom symptom = getById(symptomId);
+        User user = userService.getById(userId);
+        user.getSymptoms().remove(symptom);
     }
 }
