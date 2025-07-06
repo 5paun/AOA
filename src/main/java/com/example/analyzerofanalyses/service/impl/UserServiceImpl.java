@@ -23,11 +23,11 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-//    private final SymptomServiceFacade symptomServiceFacade;
 
     @Override
     @Transactional(readOnly = true)
-//    @Cacheable(value = "UserService::getById", key = "#id")
+    // @todo
+    // @Cacheable(value = "UserService::getById", key = "#id")
     public User getById(final Long id) {
         return userRepository.findById(id)
                 .orElseThrow(
@@ -66,17 +66,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-//    @todo с кешированием вылетает 500
-//    @Caching(cacheable = {
-//            @Cacheable(
-//                    value = "UserService::getById",
-//                    key = "#user.id"
-//            ),
-//            @Cacheable(
-//                    value = "UserService::getByEmail",
-//                    key = "#user.email"
-//            )
-//    })
     public User create(final User user) {
         if (isEmailExist(user.getEmail(), user.getId())) {
             throw new IllegalStateException("Email already exists.");
@@ -98,21 +87,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-//    @Cacheable(
-//            value = "UserService::isSymptomOwner",
-//            key = "#userId + '.' + #symptomId"
-//    )
     public boolean isSymptomOwner(final Long userId, final Long symptomId) {
-//        return symptomServiceFacade.isSymptomOwner(userId, symptomId);
         return userRepository.isSymptomOwner(userId, symptomId);
     }
 
     @Override
     @Transactional
-    @Cacheable(
-            value = "UserService::isAnalysisOwner",
-            key = "#userId + '.' + #analysisId"
-    )
     public boolean isAnalysisOwner(final Long userId, final Long analysisId) {
         return userRepository.isAnalysisOwner(userId, analysisId);
     }

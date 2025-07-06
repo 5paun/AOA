@@ -11,7 +11,6 @@ import com.example.analyzerofanalyses.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -44,7 +43,6 @@ public class SymptomServiceImpl implements SymptomService {
     @Override
     @Transactional(readOnly = true)
     public List<Symptom> getAllByUserId(final Long id) {
-//        return symptomServiceFacade.getAllByUserId(id);
         User user = userService.getById(id);
 
         return symptomRepository.findAllByUserId(user.getId());
@@ -63,7 +61,6 @@ public class SymptomServiceImpl implements SymptomService {
 
     @Override
     @Transactional
-//    @Cacheable(value = "SymptomService::getById", key = "#symptom.id")
     public Symptom create(final Symptom symptom) {
         symptomRepository.save(symptom);
 

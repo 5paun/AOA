@@ -11,7 +11,6 @@ import com.example.analyzerofanalyses.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,7 +26,8 @@ public class AnalysisServiceImpl implements AnalysisService {
 
     @Override
     @Transactional(readOnly = true)
-    @Cacheable(value = "AnalysisService::getById", key = "#id")
+    // @todo с кешированием вылетает 500
+    // @Cacheable(value = "AnalysisService::getById", key = "#id")
     public Analysis getById(final Long id) {
         return analysisRepository.findById(id)
                 .orElseThrow(() ->
@@ -53,9 +53,9 @@ public class AnalysisServiceImpl implements AnalysisService {
 
     @Override
     @Transactional
-    @Cacheable(value = "AnalysisService::getById", key = "#analysis.id")
     public Analysis create(final Analysis analysis, final Long userId) {
         User user = userService.getById(userId);
+        analysisRepository.save(analysis);
         user.getAnalyses().add(analysis);
         userService.update(user);
 

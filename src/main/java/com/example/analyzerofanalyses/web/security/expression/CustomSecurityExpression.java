@@ -38,7 +38,7 @@ public class CustomSecurityExpression {
 
         Long userId = getUserIdByToken();
 
-        return userId.equals(id) || hasAnyRole(authentication, Role.ROLE_ADMIN, Role.ROLE_USER);
+        return userId.equals(id) || hasAnyRole(authentication, Role.ROLE_ADMIN, Role.ROLE_DOCTOR);
     }
 
     private boolean hasAnyRole(
@@ -67,7 +67,8 @@ public class CustomSecurityExpression {
     public boolean canAccessAnalysis(final Long analysisId) {
         Long userId = getUserIdByToken();
         Analysis analysis = analysisService.getById(analysisId);
+        Authentication authentication = getAuthentication();
 
-        return userService.isAnalysisOwner(userId, analysis.getId());
+        return userService.isAnalysisOwner(userId, analysis.getId()) || hasAnyRole(authentication, Role.ROLE_ADMIN, Role.ROLE_DOCTOR);
     }
 }

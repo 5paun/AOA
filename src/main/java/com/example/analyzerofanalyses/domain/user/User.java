@@ -50,8 +50,11 @@ public class User implements Serializable {
     @JoinTable(name = "client_symptom", joinColumns = @JoinColumn(name = "client_id"), inverseJoinColumns = @JoinColumn(name = "symptom_id"))
     private List<Symptom> symptoms;
 
-    @OneToMany
-    @JoinColumn(name = "id")
+    @OneToMany(fetch = FetchType.EAGER)
+    //    @JoinColumn(name = "id")
+    //    @JoinTable(inverseJoinColumns = @JoinColumn(name = "analysis_id"))
+    // @todo (избавиться от таблицы client_analysis)
+    @JoinTable(name = "client_analysis", joinColumns = @JoinColumn(name = "client_id"), inverseJoinColumns = @JoinColumn(name = "analysis_id"))
     private List<Analysis> analyses;
 
 }

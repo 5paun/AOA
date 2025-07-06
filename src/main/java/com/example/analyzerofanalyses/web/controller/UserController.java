@@ -38,7 +38,6 @@ import java.util.List;
 public class UserController {
     private final UserService userService;
     private final SymptomService symptomService;
-//    private final SymptomServiceFacade symptomServiceFacade;
     private final AnalysisService analysisService;
 
     private final UserMapper userMapper;
@@ -77,7 +76,6 @@ public class UserController {
     @Operation(summary = "Get all User symptoms")
     @PreAuthorize("@customSecurityExpression.canAccessUser(#id)")
     public List<SymptomDto> getSymptomsByUserId(@PathVariable final Long id) {
-//        List<Symptom> symptoms = symptomServiceFacade.getAllByUserId(id);
         List<Symptom> symptoms = symptomService.getAllByUserId(id);
 
         return symptomMapper.toDto(symptoms);
