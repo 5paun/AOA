@@ -9,11 +9,13 @@ create table if not exists client
 create table if not exists analysis
 (
     id bigserial primary key,
+    client_id bigserial not null,
     title varchar(255) not null,
     total_cholesterol NUMERIC(3, 1),
     white_blood_cells NUMERIC(2, 1),
     lymphocytes INTEGER,
-    created_date timestamp not null
+    created_date timestamp not null,
+    FOREIGN KEY (client_id) REFERENCES client (id) on DELETE CASCADE
 );
 
 create table if not exists symptom
@@ -22,15 +24,6 @@ create table if not exists symptom
     title varchar(50) not null,
     description varchar(500),
     recommendation varchar(1000)
-);
-
-create table if not exists client_analysis
-(
-    client_id bigint not null,
-    analysis_id bigint not null,
-    primary key (client_id, analysis_id),
-    constraint fk_client_analysis_client foreign key (client_id) references client (id) on delete cascade on update no action,
-    constraint fk_client_analysis_analysis foreign key (analysis_id) references analysis (id) on delete cascade on update no action
 );
 
 create table if not exists client_symptom

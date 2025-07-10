@@ -27,9 +27,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query(value = """
                 SELECT exists (
                         SELECT 1
-                        FROM client_analysis
+                        FROM analysis
                         WHERE client_id = :userId
-                        AND analysis_id = :analysisId
+                        AND id = :analysisId
                     )
             """, nativeQuery = true)
     boolean isAnalysisOwner(

@@ -3,7 +3,6 @@ package com.example.analyzerofanalyses.web.security.expression;
 import com.example.analyzerofanalyses.domain.analysis.Analysis;
 import com.example.analyzerofanalyses.domain.user.Role;
 import com.example.analyzerofanalyses.service.AnalysisService;
-import com.example.analyzerofanalyses.service.SymptomService;
 import com.example.analyzerofanalyses.service.UserService;
 import com.example.analyzerofanalyses.web.security.JwtEntity;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +16,6 @@ import org.springframework.stereotype.Service;
 public class CustomSecurityExpression {
 
     private final UserService userService;
-    private final SymptomService symptomService;
     private final AnalysisService analysisService;
 
     public Authentication getAuthentication() {
@@ -33,12 +31,16 @@ public class CustomSecurityExpression {
         return user.getId();
     }
 
+    public boolean isUserAuthorized(final Long id) {
+        Long userId = getUserIdByToken();
+
+        return userId.equals(id);
+    }
+
     public boolean canAccessUser(final Long id) {
         Authentication authentication = getAuthentication();
 
-        Long userId = getUserIdByToken();
-
-        return userId.equals(id) || hasAnyRole(authentication, Role.ROLE_ADMIN, Role.ROLE_DOCTOR);
+        return isUserAuthorized(id) || hasAnyRole(authentication, Role.ROLE_ADMIN, Role.ROLE_DOCTOR);
     }
 
     private boolean hasAnyRole(
@@ -64,11 +66,17 @@ public class CustomSecurityExpression {
         return hasAnyRole(authentication, Role.ROLE_ADMIN, Role.ROLE_DOCTOR);
     }
 
-    public boolean canAccessAnalysis(final Long analysisId) {
-        Long userId = getUserIdByToken();
+    public boolean canCUDAnalysis(final Long analysisId) {
         Analysis analysis = analysisService.getById(analysisId);
+        Long userId = getUserIdByToken();
+
+        return userService.isAnalysisOwner(userId, analysis.getId());
+    }
+
+    public boolean canAccessAnalysis(final Long analysisId) {
         Authentication authentication = getAuthentication();
 
-        return userService.isAnalysisOwner(userId, analysis.getId()) || hasAnyRole(authentication, Role.ROLE_ADMIN, Role.ROLE_DOCTOR);
+
+        return canCUDAnalysis(analysisId) || hasAnyRole(authentication, Role.ROLE_ADMIN, Role.ROLE_DOCTOR);
     }
 }

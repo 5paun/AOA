@@ -112,7 +112,7 @@ public class UserController {
 
     @PostMapping("/{id}/analyses")
     @Operation(summary = "Add analysis to user")
-    @PreAuthorize("@customSecurityExpression.canAccessUser(#id)")
+    @PreAuthorize("@customSecurityExpression.isUserAuthorized(#id)")
     public AnalysisDto createAnalysis(
             @PathVariable final Long id,
             @Validated(OnCreate.class) @RequestBody final AnalysisDto dto

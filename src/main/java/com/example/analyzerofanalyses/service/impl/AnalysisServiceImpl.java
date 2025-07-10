@@ -46,6 +46,8 @@ public class AnalysisServiceImpl implements AnalysisService {
     @Transactional
     @CachePut(value = "AnalysisService::getById::getById", key = "#analysis.id")
     public Analysis update(final Analysis analysis) {
+        Analysis analysisDto = getById(analysis.getId());
+        analysis.setUser(analysisDto.getUser());
         analysisRepository.save(analysis);
 
         return analysis;
@@ -55,6 +57,7 @@ public class AnalysisServiceImpl implements AnalysisService {
     @Transactional
     public Analysis create(final Analysis analysis, final Long userId) {
         User user = userService.getById(userId);
+        analysis.setUser(user);
         analysisRepository.save(analysis);
         user.getAnalyses().add(analysis);
         userService.update(user);

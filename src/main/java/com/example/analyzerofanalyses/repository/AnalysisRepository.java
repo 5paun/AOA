@@ -9,8 +9,7 @@ import java.util.List;
 public interface AnalysisRepository extends JpaRepository<Analysis, Long> {
     @Query(value = """
                 SELECT * FROM analysis a
-                JOIN client_analysis ca ON ca.analysis_id = a.id
-                WHERE ca.client_id = :userId
+                WHERE a.client_id = :userId
             """, nativeQuery = true)
     List<Analysis> findAllByUserId(Long userId);
 

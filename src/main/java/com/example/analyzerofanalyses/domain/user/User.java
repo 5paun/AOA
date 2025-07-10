@@ -2,6 +2,7 @@ package com.example.analyzerofanalyses.domain.user;
 
 import com.example.analyzerofanalyses.domain.analysis.Analysis;
 import com.example.analyzerofanalyses.domain.symptom.Symptom;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
@@ -50,11 +51,7 @@ public class User implements Serializable {
     @JoinTable(name = "client_symptom", joinColumns = @JoinColumn(name = "client_id"), inverseJoinColumns = @JoinColumn(name = "symptom_id"))
     private List<Symptom> symptoms;
 
-    @OneToMany(fetch = FetchType.EAGER)
-    //    @JoinColumn(name = "id")
-    //    @JoinTable(inverseJoinColumns = @JoinColumn(name = "analysis_id"))
-    // @todo (избавиться от таблицы client_analysis)
-    @JoinTable(name = "client_analysis", joinColumns = @JoinColumn(name = "client_id"), inverseJoinColumns = @JoinColumn(name = "analysis_id"))
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Analysis> analyses;
 
 }

@@ -17,6 +17,13 @@ public class AnalysisDto {
     @NotNull(message = "Id must be not null.", groups = OnUpdate.class)
     private Long id;
 
+    /**
+     * @todo
+     * отображается в swagger в теле запроса при создании и обновлении,
+     * что не есть хорошо
+     */
+    private Long clientId;
+
     @NotNull(
             message = "Title must be not null.",
             groups = {OnCreate.class, OnUpdate.class}
