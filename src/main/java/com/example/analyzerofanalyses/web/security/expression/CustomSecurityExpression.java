@@ -2,6 +2,7 @@ package com.example.analyzerofanalyses.web.security.expression;
 
 import com.example.analyzerofanalyses.domain.analysis.Analysis;
 import com.example.analyzerofanalyses.domain.user.Role;
+import com.example.analyzerofanalyses.domain.user.User;
 import com.example.analyzerofanalyses.service.AnalysisService;
 import com.example.analyzerofanalyses.service.UserService;
 import com.example.analyzerofanalyses.web.security.JwtEntity;
@@ -66,7 +67,13 @@ public class CustomSecurityExpression {
         return hasAnyRole(authentication, Role.ROLE_ADMIN, Role.ROLE_DOCTOR);
     }
 
-    public boolean canCUDAnalysis(final Long analysisId) {
+    public boolean canCreateAnalysis(final Long id) {
+        User user = userService.getById(id);
+
+        return isUserAuthorized(user.getId());
+    }
+
+    public boolean isAnalysisOwner(final Long analysisId) {
         Analysis analysis = analysisService.getById(analysisId);
         Long userId = getUserIdByToken();
 
@@ -77,6 +84,6 @@ public class CustomSecurityExpression {
         Authentication authentication = getAuthentication();
 
 
-        return canCUDAnalysis(analysisId) || hasAnyRole(authentication, Role.ROLE_ADMIN, Role.ROLE_DOCTOR);
+        return isAnalysisOwner(analysisId) || hasAnyRole(authentication, Role.ROLE_ADMIN, Role.ROLE_DOCTOR);
     }
 }

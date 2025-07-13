@@ -10,7 +10,6 @@ import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
@@ -34,7 +33,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class ApplicationConfig {
 
     private final JwtTokenProvider tokenProvider;
-    private final ApplicationContext applicationContext;
     private final MinioProperties minioProperties;
 
     @Bean
@@ -97,7 +95,7 @@ public class ApplicationConfig {
                 )
                 .exceptionHandling(configure -> configure
                         .authenticationEntryPoint((
-                                (request, response, exception) -> {
+                                (_, response, _) -> {
                                     response.setStatus(
                                             HttpStatus.UNAUTHORIZED
                                                     .value()
@@ -105,7 +103,7 @@ public class ApplicationConfig {
                                     response.getWriter()
                                             .write("Unauthorized");
                                 }))
-                        .accessDeniedHandler((request, response, exception) -> {
+                        .accessDeniedHandler((_, response, _) -> {
                             response.setStatus(
                                     HttpStatus.FORBIDDEN
                                             .value()

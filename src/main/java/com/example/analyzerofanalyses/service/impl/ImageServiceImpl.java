@@ -31,7 +31,7 @@ public class ImageServiceImpl implements ImageService {
             createBucket();
         } catch (Exception e) {
             throw new ImageUploadException(
-                    "Image upload failed" + e.getMessage()
+                    "Image upload failed: " + e.getMessage()
             );
         }
 
@@ -48,7 +48,7 @@ public class ImageServiceImpl implements ImageService {
             inputStream = file.getInputStream();
         } catch (Exception e) {
             throw new ImageUploadException(
-                    "Image upload failed" + e.getMessage()
+                    "Image upload failed: " + e.getMessage()
             );
         }
 
@@ -109,8 +109,14 @@ public class ImageServiceImpl implements ImageService {
     }
 
     private String getExtension(final MultipartFile file) {
-        return file.getOriginalFilename()
-                .substring(file.getOriginalFilename().lastIndexOf(".") + 1);
+        String originalFilename = file.getOriginalFilename();
+
+        if (originalFilename == null) {
+            throw new ImageUploadException("Image upload failed");
+        }
+
+        return originalFilename
+                .substring(originalFilename.lastIndexOf(".") + 1);
     }
 
     @SneakyThrows

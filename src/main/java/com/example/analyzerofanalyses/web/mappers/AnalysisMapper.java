@@ -7,7 +7,9 @@ import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring", uses = { UserMapper.class })
 public interface AnalysisMapper extends Mappable<Analysis, AnalysisDto> {
+
     @Override
     @Mapping(target = "clientId", source = "user.id")
     AnalysisDto toDto(Analysis entity);
+
 }

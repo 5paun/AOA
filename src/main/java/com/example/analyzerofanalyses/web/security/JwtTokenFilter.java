@@ -33,7 +33,7 @@ public class JwtTokenFilter extends GenericFilterBean {
 
         if (
                 bearerToken != null
-                && jwtTokenProvider.validateToken(bearerToken)
+                && jwtTokenProvider.isValid(bearerToken)
         ) {
             try {
                 Authentication authentication = jwtTokenProvider
@@ -44,7 +44,8 @@ public class JwtTokenFilter extends GenericFilterBean {
                             .getContext()
                             .setAuthentication(authentication);
                 }
-            } catch (ResourceNotFoundException ignored) {
+            } catch (ResourceNotFoundException _) {
+                logger.warn("Resource not found while validating JWT token: {}");
             }
         }
 

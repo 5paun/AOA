@@ -37,10 +37,11 @@ public class AnalysisController {
 
     @PutMapping
     @Operation(summary = "Update analysis")
-    @PreAuthorize("@customSecurityExpression.canCUDAnalysis(#dto.id)")
+    @PreAuthorize("@customSecurityExpression.isAnalysisOwner(#dto.id)")
     public AnalysisDto update(
             @Validated(OnUpdate.class) @RequestBody final AnalysisDto dto
     ) {
+        analysisService.getById(dto.getId());
         Analysis analysis = analysisMapper.toEntity(dto);
         Analysis updatedAnalysis = analysisService.update(analysis);
 
@@ -58,14 +59,14 @@ public class AnalysisController {
 
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete analysis  user")
-    @PreAuthorize("@customSecurityExpression.canCUDAnalysis(#id)")
+    @PreAuthorize("@customSecurityExpression.isAnalysisOwner(#id)")
     public void deleteById(@PathVariable final Long id) {
         analysisService.delete(id);
     }
 
     @PostMapping(path = "/{id}/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "Upload image to analysis")
-    @PreAuthorize("@customSecurityExpression.canCUDAnalysis(#id)")
+    @PreAuthorize("@customSecurityExpression.isAnalysisOwner(#id)")
     public void uploadImage(
             @PathVariable final Long id,
             @Validated @ModelAttribute final AnalysisImageDto imageDto

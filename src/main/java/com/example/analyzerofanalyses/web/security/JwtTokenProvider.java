@@ -18,13 +18,12 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
-import java.security.Key;
+import javax.crypto.SecretKey;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -34,7 +33,7 @@ public class JwtTokenProvider {
 
     private final UserDetailsService userDetailsService;
     private final UserService userService;
-    private Key key;
+    private SecretKey key;
 
     @PostConstruct
     public void init() {
@@ -54,8 +53,8 @@ public class JwtTokenProvider {
                 .plus(jwtProperties.getAccess(), ChronoUnit.HOURS);
 
         return Jwts.builder()
-                .setClaims(claims)
-                .setExpiration(Date.from(validity))
+                .claims(claims)
+                .expiration(Date.from(validity))
                 .signWith(key)
                 .compact();
     }
@@ -63,7 +62,7 @@ public class JwtTokenProvider {
     private List<String> resolveRoles(final Set<Role> roles) {
         return roles.stream()
                 .map(Enum::name)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     public String createRefreshToken(final Long userId, final String email) {
@@ -74,8 +73,8 @@ public class JwtTokenProvider {
                 .plus(jwtProperties.getAccess(), ChronoUnit.DAYS);
 
         return Jwts.builder()
-                .setClaims(claims)
-                .setExpiration(Date.from(validity))
+                .claims(claims)
+                .expiration(Date.from(validity))
                 .signWith(key)
                 .compact();
     }
@@ -83,7 +82,7 @@ public class JwtTokenProvider {
     public JwtResponse refreshUserTokens(final String refreshToken) {
         JwtResponse jwtResponse = new JwtResponse();
 
-        if (!validateToken(refreshToken)) {
+        if (!isValid(refreshToken)) {
             throw new AccessDeniedException();
         }
 
@@ -101,24 +100,23 @@ public class JwtTokenProvider {
         return jwtResponse;
     }
 
-    public boolean validateToken(final String token) {
+    public boolean isValid(final String token) {
         Jws<Claims> claims = Jwts
                 .parser()
-                .setSigningKey(key)
+                .verifyWith(key)
                 .build()
-                .parseClaimsJws(token);
+                .parseSignedClaims(token);
 
-        return !claims.getBody().getExpiration().before(new Date());
+        return claims.getPayload().getExpiration().after(new Date());
     }
 
     private String getId(final String token) {
         return Jwts
-                // в курсе был parserBuilder
                 .parser()
-                .setSigningKey(key)
+                .verifyWith(key)
                 .build()
-                .parseClaimsJws(token)
-                .getBody()
+                .parseSignedClaims(token)
+                .getPayload()
                 .get("id")
                 .toString();
     }
@@ -126,10 +124,10 @@ public class JwtTokenProvider {
     private String getUsername(final String token) {
         return Jwts
                 .parser()
-                .setSigningKey(key)
+                .verifyWith(key)
                 .build()
-                .parseClaimsJws(token)
-                .getBody()
+                .parseSignedClaims(token)
+                .getPayload()
                 .getSubject();
     }
 

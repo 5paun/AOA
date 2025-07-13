@@ -5,6 +5,7 @@ import com.example.analyzerofanalyses.domain.exception.ExceptionBody;
 import com.example.analyzerofanalyses.domain.exception.ImageUploadException;
 import com.example.analyzerofanalyses.domain.exception.ResourceMappingException;
 import com.example.analyzerofanalyses.domain.exception.ResourceNotFoundException;
+import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestControllerAdvice
@@ -72,7 +74,8 @@ public class ControllerAdvice {
         exceptionBody.setErrors(errors.stream()
                 .collect(Collectors.toMap(
                         FieldError::getField,
-                        FieldError::getDefaultMessage,
+                        fieldError -> Optional.ofNullable(fieldError.getDefaultMessage())
+                                .orElse("No message available"),
                         (existingMessage, newMessage) ->
                                 existingMessage + " " + newMessage
                 )));
@@ -91,7 +94,7 @@ public class ControllerAdvice {
         exceptionBody.setErrors(
                 e.getConstraintViolations().stream().collect(Collectors.toMap(
                         violation -> violation.getPropertyPath().toString(),
-                        violation -> violation.getMessage()
+                        ConstraintViolation::getMessage
                 )));
 
         return exceptionBody;

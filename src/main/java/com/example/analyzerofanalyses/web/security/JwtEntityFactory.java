@@ -9,7 +9,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class JwtEntityFactory {
+public final class JwtEntityFactory {
+    private JwtEntityFactory() {
+        throw new UnsupportedOperationException("This is a utility class and cannot be instantiated.");
+    }
 
     public static JwtEntity create(final User user) {
         return new JwtEntity(

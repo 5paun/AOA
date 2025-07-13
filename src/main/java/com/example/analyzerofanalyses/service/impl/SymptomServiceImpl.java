@@ -32,8 +32,6 @@ public class SymptomServiceImpl implements SymptomService {
 
     @Override
     @Transactional(readOnly = true)
-    // @todo с кешированием вылетает 500
-    // @Cacheable(value = "SymptomService::getById", key = "#id")
     public Symptom getById(final Long id) {
         return symptomRepository.findById(id)
                 .orElseThrow(() ->

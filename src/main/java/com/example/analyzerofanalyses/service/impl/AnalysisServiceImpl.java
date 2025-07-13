@@ -26,8 +26,6 @@ public class AnalysisServiceImpl implements AnalysisService {
 
     @Override
     @Transactional(readOnly = true)
-    // @todo с кешированием вылетает 500
-    // @Cacheable(value = "AnalysisService::getById", key = "#id")
     public Analysis getById(final Long id) {
         return analysisRepository.findById(id)
                 .orElseThrow(() ->
