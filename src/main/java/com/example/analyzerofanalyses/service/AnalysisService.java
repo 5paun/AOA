@@ -1,7 +1,7 @@
 package com.example.analyzerofanalyses.service;
 
 import com.example.analyzerofanalyses.domain.analysis.Analysis;
-import com.example.analyzerofanalyses.domain.analysis.AnalysisImage;
+import com.example.analyzerofanalyses.domain.image.Image;
 
 import java.util.List;
 
@@ -12,9 +12,11 @@ public interface AnalysisService {
 
     Analysis update(Analysis analysis);
 
+    Analysis partialUpdate(Analysis analysis);
+
     Analysis create(Analysis analysis, Long userId);
 
     void delete(Long id);
 
-    void uploadImage(Long id, AnalysisImage image);
+    void uploadImage(Long id, Image image);
 }

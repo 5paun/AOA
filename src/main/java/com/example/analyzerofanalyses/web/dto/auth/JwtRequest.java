@@ -8,7 +8,7 @@ import lombok.Data;
 @Schema(description = "Request for login")
 public class JwtRequest {
 
-    @Schema(description = "email", example = "Shalashov@tut.by")
+    @Schema(description = "email", example = "Shalashov-D-S@tut.by")
     @NotNull(message = "Email must be not null.")
     private String email;
 

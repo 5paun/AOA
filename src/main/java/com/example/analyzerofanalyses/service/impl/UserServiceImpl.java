@@ -8,12 +8,12 @@ import com.example.analyzerofanalyses.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -26,6 +26,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional(readOnly = true)
+    public List<User> getAll() {
+        return userRepository.findAll();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public User getById(final Long id) {
         return userRepository.findById(id)
                 .orElseThrow(
@@ -35,7 +41,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional(readOnly = true)
-    @Cacheable(value = "UserService::getByEmail", key = "#email")
     public User getByEmail(final String email) {
         return userRepository.findByEmail(email)
                 .orElseThrow(
@@ -62,6 +67,34 @@ public class UserServiceImpl implements UserService {
 
         return user;
     }
+
+    @Override
+    @Transactional
+    public User partialUpdate(final User user) {
+        Long userId = user.getId();
+        User existingUser = getById(userId);
+
+        if (user.getName() != null) {
+            existingUser.setName(user.getName());
+        }
+
+        if (user.getEmail() != null) {
+            if (isEmailExist(user.getEmail(), userId)) {
+                throw new IllegalStateException("Email already exists.");
+            }
+
+            existingUser.setEmail(user.getEmail());
+        }
+
+        if (user.getPassword() != null) {
+            existingUser.setPassword(passwordEncoder.encode(user.getPassword()));
+        }
+
+        userRepository.save(existingUser);
+
+        return existingUser;
+    }
+
 
     @Override
     public User create(final User user) {

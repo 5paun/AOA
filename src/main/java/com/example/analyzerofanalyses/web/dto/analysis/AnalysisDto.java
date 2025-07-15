@@ -35,8 +35,8 @@ public class AnalysisDto {
     )
     private String title;
 
-    private float totalCholesterol;
-    private float whiteBloodCells;
+    private Float totalCholesterol;
+    private Float whiteBloodCells;
     private int lymphocytes;
 
     @DateTimeFormat(iso = DateTimeFormat.ISO.TIME)

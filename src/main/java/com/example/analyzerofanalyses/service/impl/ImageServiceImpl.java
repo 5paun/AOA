@@ -1,8 +1,7 @@
 package com.example.analyzerofanalyses.service.impl;
 
-import com.example.analyzerofanalyses.domain.analysis.AnalysisImage;
 import com.example.analyzerofanalyses.domain.exception.ImageUploadException;
-import com.example.analyzerofanalyses.domain.symptom.SymptomImage;
+import com.example.analyzerofanalyses.domain.image.Image;
 import com.example.analyzerofanalyses.service.ImageService;
 import com.example.analyzerofanalyses.service.props.MinioProperties;
 import io.minio.BucketExistsArgs;
@@ -26,7 +25,7 @@ public class ImageServiceImpl implements ImageService {
 
     // нужно сделать так, чтобы работало с любым типом картинки
     @Override
-    public String upload(final SymptomImage image) {
+    public String upload(final Image image) {
         try {
             createBucket();
         } catch (Exception e) {
@@ -49,38 +48,6 @@ public class ImageServiceImpl implements ImageService {
         } catch (Exception e) {
             throw new ImageUploadException(
                     "Image upload failed: " + e.getMessage()
-            );
-        }
-
-        saveImage(inputStream, fileName);
-
-        return fileName;
-    }
-
-    @Override
-    public String upload(final AnalysisImage image) {
-        try {
-            createBucket();
-        } catch (Exception e) {
-            throw new ImageUploadException(
-                    "Image upload failed" + e.getMessage()
-            );
-        }
-
-        MultipartFile file = image.getFile();
-
-        if (file.isEmpty() || file.getOriginalFilename() == null) {
-            throw new ImageUploadException("Image must have name.");
-        }
-
-        String fileName = generateFileName(file);
-        InputStream inputStream;
-
-        try {
-            inputStream = file.getInputStream();
-        } catch (Exception e) {
-            throw new ImageUploadException(
-                    "Image upload failed" + e.getMessage()
             );
         }
 

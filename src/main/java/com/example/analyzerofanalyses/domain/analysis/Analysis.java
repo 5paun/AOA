@@ -25,9 +25,9 @@ public class Analysis implements Serializable {
     private Long id;
 
     private String title;
-    private double totalCholesterol;
-    private double whiteBloodCells;
-    private int lymphocytes;
+    private Float totalCholesterol;
+    private Float whiteBloodCells;
+    private Integer lymphocytes;
     private LocalDateTime createdDate;
 
     @Column(name = "image")

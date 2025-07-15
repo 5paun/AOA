@@ -21,6 +21,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -54,6 +55,25 @@ public class UserController {
         User updatedUser = userService.update(user);
 
         return userMapper.toDto(updatedUser);
+    }
+
+    @PatchMapping
+    @Operation(summary = "Partially update user")
+    @PreAuthorize("@customSecurityExpression.canAccessUser(#dto.id)")
+    public UserDto partialUpdate(@RequestBody final UserDto dto) {
+        User user = userMapper.toEntity(dto);
+        User updatedUser = userService.partialUpdate(user);
+
+        return userMapper.toDto(updatedUser);
+    }
+
+    @GetMapping
+    @Operation(summary = "Get all UserDtos")
+    @PreAuthorize("@customSecurityExpression.canAccessAllUsers()")
+    public List<UserDto> getAll() {
+        List<User> users = userService.getAll();
+
+        return userMapper.toDto(users);
     }
 
     @GetMapping("/{id}")

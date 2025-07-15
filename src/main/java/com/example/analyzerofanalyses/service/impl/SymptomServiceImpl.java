@@ -1,8 +1,8 @@
 package com.example.analyzerofanalyses.service.impl;
 
 import com.example.analyzerofanalyses.domain.exception.ResourceNotFoundException;
+import com.example.analyzerofanalyses.domain.image.Image;
 import com.example.analyzerofanalyses.domain.symptom.Symptom;
-import com.example.analyzerofanalyses.domain.symptom.SymptomImage;
 import com.example.analyzerofanalyses.domain.user.User;
 import com.example.analyzerofanalyses.repository.SymptomRepository;
 import com.example.analyzerofanalyses.service.ImageService;
@@ -59,6 +59,30 @@ public class SymptomServiceImpl implements SymptomService {
 
     @Override
     @Transactional
+    @CachePut(value = "SymptomService::getById", key = "#symptom.id")
+    public Symptom partialUpdate(final Symptom symptom) {
+        Long id = symptom.getId();
+        Symptom existingSymptom = getById(id);
+
+        if (symptom.getTitle() != null) {
+            existingSymptom.setTitle(symptom.getTitle());
+        }
+
+        if (symptom.getDescription() != null) {
+            existingSymptom.setDescription(symptom.getDescription());
+        }
+
+        if (symptom.getRecommendation() != null) {
+            existingSymptom.setRecommendation(symptom.getRecommendation());
+        }
+
+        symptomRepository.save(existingSymptom);
+
+        return existingSymptom;
+    }
+
+    @Override
+    @Transactional
     public Symptom create(final Symptom symptom) {
         symptomRepository.save(symptom);
 
@@ -76,7 +100,7 @@ public class SymptomServiceImpl implements SymptomService {
     @Override
     @Transactional
     @CacheEvict(value = "SymptomService::getById", key = "#id")
-    public void uploadImage(final Long id, final SymptomImage image) {
+    public void uploadImage(final Long id, final Image image) {
         Symptom symptom = getById(id);
         String fileName = imageService.upload(image);
         symptom.getImages().add(fileName);

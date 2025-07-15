@@ -1,13 +1,13 @@
 package com.example.analyzerofanalyses.web.controller;
 
+import com.example.analyzerofanalyses.domain.image.Image;
 import com.example.analyzerofanalyses.domain.symptom.Symptom;
-import com.example.analyzerofanalyses.domain.symptom.SymptomImage;
 import com.example.analyzerofanalyses.service.SymptomService;
+import com.example.analyzerofanalyses.web.dto.Image.ImageDto;
 import com.example.analyzerofanalyses.web.dto.symptom.SymptomDto;
-import com.example.analyzerofanalyses.web.dto.symptom.SymptomImageDto;
 import com.example.analyzerofanalyses.web.dto.validation.OnCreate;
 import com.example.analyzerofanalyses.web.dto.validation.OnUpdate;
-import com.example.analyzerofanalyses.web.mappers.SymptomImageMapper;
+import com.example.analyzerofanalyses.web.mappers.ImageMapper;
 import com.example.analyzerofanalyses.web.mappers.SymptomMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -18,6 +18,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -36,7 +37,7 @@ public class SymptomController {
     private final SymptomService symptomService;
 
     private final SymptomMapper symptomMapper;
-    private final SymptomImageMapper symptomImageMapper;
+    private final ImageMapper imageMapper;
 
     @PostMapping
     @Operation(summary = "Create symptom")
@@ -58,6 +59,16 @@ public class SymptomController {
     ) {
         Symptom symptom = symptomMapper.toEntity(dto);
         Symptom updatedSymptom = symptomService.update(symptom);
+
+        return symptomMapper.toDto(updatedSymptom);
+    }
+
+    @PatchMapping
+    @Operation(summary = "Partially update symptom")
+    @PreAuthorize("@customSecurityExpression.canAccessSymptom()")
+    public SymptomDto partialUpdate(@RequestBody final SymptomDto dto) {
+        Symptom symptom = symptomMapper.toEntity(dto);
+        Symptom updatedSymptom = symptomService.partialUpdate(symptom);
 
         return symptomMapper.toDto(updatedSymptom);
     }
@@ -90,9 +101,9 @@ public class SymptomController {
     @PreAuthorize("@customSecurityExpression.canAccessSymptom()")
     public void uploadImage(
             @PathVariable final Long id,
-            @Validated @ModelAttribute final SymptomImageDto imageDto
+            @Validated @ModelAttribute final ImageDto imageDto
     ) {
-        SymptomImage image = symptomImageMapper.toEntity(imageDto);
+        Image image = imageMapper.toEntity(imageDto);
         symptomService.uploadImage(id, image);
     }
 }

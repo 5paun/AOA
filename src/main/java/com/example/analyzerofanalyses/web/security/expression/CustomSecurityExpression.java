@@ -44,6 +44,12 @@ public class CustomSecurityExpression {
         return isUserAuthorized(id) || hasAnyRole(authentication, Role.ROLE_ADMIN, Role.ROLE_DOCTOR);
     }
 
+    public boolean canAccessAllUsers() {
+        Authentication authentication = getAuthentication();
+
+        return hasAnyRole(authentication, Role.ROLE_ADMIN, Role.ROLE_DOCTOR);
+    }
+
     private boolean hasAnyRole(
             final Authentication authentication,
             final Role... roles

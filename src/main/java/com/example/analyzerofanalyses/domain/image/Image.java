@@ -1,10 +1,10 @@
-package com.example.analyzerofanalyses.domain.analysis;
+package com.example.analyzerofanalyses.domain.image;
 
 import lombok.Data;
 import org.springframework.web.multipart.MultipartFile;
 
 @Data
-public class AnalysisImage {
+public class Image {
 
     private MultipartFile file;
 

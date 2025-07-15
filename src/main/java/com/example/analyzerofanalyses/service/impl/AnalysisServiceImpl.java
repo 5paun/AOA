@@ -1,8 +1,8 @@
 package com.example.analyzerofanalyses.service.impl;
 
 import com.example.analyzerofanalyses.domain.analysis.Analysis;
-import com.example.analyzerofanalyses.domain.analysis.AnalysisImage;
 import com.example.analyzerofanalyses.domain.exception.ResourceNotFoundException;
+import com.example.analyzerofanalyses.domain.image.Image;
 import com.example.analyzerofanalyses.domain.user.User;
 import com.example.analyzerofanalyses.repository.AnalysisRepository;
 import com.example.analyzerofanalyses.service.AnalysisService;
@@ -42,7 +42,7 @@ public class AnalysisServiceImpl implements AnalysisService {
 
     @Override
     @Transactional
-    @CachePut(value = "AnalysisService::getById::getById", key = "#analysis.id")
+    @CachePut(value = "AnalysisService::getById", key = "#analysis.id")
     public Analysis update(final Analysis analysis) {
         Analysis analysisDto = getById(analysis.getId());
         analysis.setUser(analysisDto.getUser());
@@ -50,6 +50,38 @@ public class AnalysisServiceImpl implements AnalysisService {
 
         return analysis;
     }
+
+    @Override
+    @Transactional
+    public Analysis partialUpdate(final Analysis analysis) {
+        Long id = analysis.getId();
+        Analysis existingAnalysis = getById(id);
+
+        if (analysis.getTitle() != null) {
+            existingAnalysis.setTitle(analysis.getTitle());
+        }
+
+        if (analysis.getTotalCholesterol() != null) {
+            existingAnalysis.setTotalCholesterol(analysis.getTotalCholesterol());
+        }
+
+        if (analysis.getWhiteBloodCells() != null) {
+            existingAnalysis.setWhiteBloodCells(analysis.getWhiteBloodCells());
+        }
+
+        if (analysis.getLymphocytes() != null) {
+            existingAnalysis.setLymphocytes(analysis.getLymphocytes());
+        }
+
+        if (analysis.getCreatedDate() != null) {
+            existingAnalysis.setCreatedDate(analysis.getCreatedDate());
+        }
+
+        analysisRepository.save(existingAnalysis);
+
+        return existingAnalysis;
+    }
+
 
     @Override
     @Transactional
@@ -73,7 +105,7 @@ public class AnalysisServiceImpl implements AnalysisService {
     @Override
     @Transactional
     @CacheEvict(value = "AnalysisService::getById", key = "#id")
-    public void uploadImage(final Long id, final AnalysisImage image) {
+    public void uploadImage(final Long id, final Image image) {
         Analysis analysis = getById(id);
         String fileName = imageService.upload(image);
         analysis.getImages().add(fileName);
