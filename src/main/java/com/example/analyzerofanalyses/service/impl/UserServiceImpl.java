@@ -5,10 +5,13 @@ import com.example.analyzerofanalyses.domain.user.Role;
 import com.example.analyzerofanalyses.domain.user.User;
 import com.example.analyzerofanalyses.repository.UserRepository;
 import com.example.analyzerofanalyses.service.UserService;
+import com.example.analyzerofanalyses.web.dto.filter.UserFilter;
+import com.example.analyzerofanalyses.web.specification.UserSpecification;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Caching;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -46,6 +49,16 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(
                         () -> new ResourceNotFoundException("User not found")
                 );
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<User> search(UserFilter searchRequest) {
+        Specification<User> specification = UserSpecification
+                        .hasName(searchRequest.getName())
+                        .and(UserSpecification.hasEmail(searchRequest.getEmail()));
+
+        return userRepository.findAll(specification);
     }
 
     @Override

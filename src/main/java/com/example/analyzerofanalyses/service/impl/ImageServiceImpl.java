@@ -23,7 +23,6 @@ public class ImageServiceImpl implements ImageService {
     private final MinioClient minioClient;
     private final MinioProperties minioProperties;
 
-    // нужно сделать так, чтобы работало с любым типом картинки
     @Override
     public String upload(final Image image) {
         try {

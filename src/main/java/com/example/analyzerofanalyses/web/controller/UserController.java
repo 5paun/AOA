@@ -7,6 +7,7 @@ import com.example.analyzerofanalyses.service.AnalysisService;
 import com.example.analyzerofanalyses.service.SymptomService;
 import com.example.analyzerofanalyses.service.UserService;
 import com.example.analyzerofanalyses.web.dto.analysis.AnalysisDto;
+import com.example.analyzerofanalyses.web.dto.filter.UserFilter;
 import com.example.analyzerofanalyses.web.dto.symptom.SymptomDto;
 import com.example.analyzerofanalyses.web.dto.user.UserDto;
 import com.example.analyzerofanalyses.web.dto.validation.OnCreate;
@@ -83,6 +84,15 @@ public class UserController {
         User user = userService.getById(id);
 
         return userMapper.toDto(user);
+    }
+
+    @PostMapping("/search")
+    @Operation(summary = "Search UserDtos")
+    @PreAuthorize("@customSecurityExpression.canAccessAllUsers()")
+    public List<UserDto> search(@RequestBody UserFilter searchRequest) {
+        List<User> users = userService.search(searchRequest);
+
+        return userMapper.toDto(users);
     }
 
     @DeleteMapping("/{id}")
