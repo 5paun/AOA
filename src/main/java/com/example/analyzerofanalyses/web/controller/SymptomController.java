@@ -4,6 +4,7 @@ import com.example.analyzerofanalyses.domain.image.Image;
 import com.example.analyzerofanalyses.domain.symptom.Symptom;
 import com.example.analyzerofanalyses.service.SymptomService;
 import com.example.analyzerofanalyses.web.dto.Image.ImageDto;
+import com.example.analyzerofanalyses.web.dto.filter.SymptomFilter;
 import com.example.analyzerofanalyses.web.dto.symptom.SymptomDto;
 import com.example.analyzerofanalyses.web.dto.validation.OnCreate;
 import com.example.analyzerofanalyses.web.dto.validation.OnUpdate;
@@ -87,6 +88,15 @@ public class SymptomController {
         Symptom symptom = symptomService.getById(id);
 
         return symptomMapper.toDto(symptom);
+    }
+
+    @PostMapping("/search")
+    @Operation(summary = "Search SymptomDtos")
+    @PreAuthorize("@customSecurityExpression.canAccessSymptom()")
+    public List<SymptomDto> search(@RequestBody SymptomFilter searchRequest) {
+        List<Symptom> symptoms = symptomService.search(searchRequest);
+
+        return symptomMapper.toDto(symptoms);
     }
 
     @DeleteMapping("/{id}")

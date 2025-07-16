@@ -3,6 +3,7 @@ package com.example.analyzerofanalyses.service;
 
 import com.example.analyzerofanalyses.domain.image.Image;
 import com.example.analyzerofanalyses.domain.symptom.Symptom;
+import com.example.analyzerofanalyses.web.dto.filter.SymptomFilter;
 
 import java.util.List;
 
@@ -12,6 +13,8 @@ public interface SymptomService {
     Symptom getById(Long id);
 
     List<Symptom> getAllByUserId(Long id);
+
+    List<Symptom> search(SymptomFilter searchRequest);
 
     Symptom update(Symptom symptom);
 

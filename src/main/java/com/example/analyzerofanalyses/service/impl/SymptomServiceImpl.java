@@ -8,9 +8,12 @@ import com.example.analyzerofanalyses.repository.SymptomRepository;
 import com.example.analyzerofanalyses.service.ImageService;
 import com.example.analyzerofanalyses.service.SymptomService;
 import com.example.analyzerofanalyses.service.UserService;
+import com.example.analyzerofanalyses.web.dto.filter.SymptomFilter;
+import com.example.analyzerofanalyses.web.specification.SymptomSpecification;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -44,7 +47,18 @@ public class SymptomServiceImpl implements SymptomService {
         User user = userService.getById(id);
 
         return symptomRepository.findAllByUserId(user.getId());
+    }
 
+    @Override
+    @Transactional(readOnly = true)
+    public List<Symptom> search(SymptomFilter searchRequest) {
+        Specification<Symptom> specification = SymptomSpecification
+                .hasTitle(searchRequest.getTitle())
+                .and(SymptomSpecification.hasDescription(searchRequest.getDescription()))
+                .and(SymptomSpecification.hasRecommendation(searchRequest.getRecommendation()))
+                .and(SymptomSpecification.hasImage(searchRequest.getHasImage()));
+
+        return symptomRepository.findAll(specification);
     }
 
     @Override

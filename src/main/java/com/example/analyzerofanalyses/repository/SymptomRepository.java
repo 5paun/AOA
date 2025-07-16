@@ -1,6 +1,7 @@
 package com.example.analyzerofanalyses.repository;
 
 import com.example.analyzerofanalyses.domain.symptom.Symptom;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -15,5 +16,7 @@ public interface SymptomRepository extends JpaRepository<Symptom, Long> {
                 WHERE cs.client_id = :userId
             """, nativeQuery = true)
     List<Symptom> findAllByUserId(@Param("userId") Long userId);
+
+    List<Symptom> findAll(Specification<Symptom> specification);
 
 }
