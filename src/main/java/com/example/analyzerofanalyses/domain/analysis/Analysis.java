@@ -13,6 +13,7 @@ import jakarta.persistence.ManyToOne;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -25,8 +26,8 @@ public class Analysis implements Serializable {
     private Long id;
 
     private String title;
-    private Float totalCholesterol;
-    private Float whiteBloodCells;
+    private BigDecimal totalCholesterol;
+    private BigDecimal whiteBloodCells;
     private Integer lymphocytes;
     private LocalDateTime createdDate;
 

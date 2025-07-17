@@ -8,15 +8,24 @@ public class SymptomSpecification {
     private SymptomSpecification() {}
 
     public static Specification<Symptom> hasTitle(String title) {
-        return (root, query, criteriaBuilder) -> title == null ? null : criteriaBuilder.like(root.get("title"), "%" + title + "%");
+        return (root, query, criteriaBuilder) ->
+                title == null
+                        ? null
+                        : criteriaBuilder.like(root.get("title"), "%" + title + "%");
     }
 
     public static Specification<Symptom> hasDescription(String description) {
-        return (root, query, criteriaBuilder) -> description == null ? null : criteriaBuilder.like(root.get("description"), "%" + description + "%");
+        return (root, query, criteriaBuilder) ->
+                description == null
+                        ? null
+                        : criteriaBuilder.like(root.get("description"), "%" + description + "%");
     }
 
     public static Specification<Symptom> hasRecommendation(String recommendation) {
-        return (root, query, criteriaBuilder) -> recommendation == null ? null : criteriaBuilder.like(root.get("recommendation"), "%" + recommendation + "%");
+        return (root, query, criteriaBuilder) ->
+                recommendation == null
+                        ? null
+                        : criteriaBuilder.like(root.get("recommendation"), "%" + recommendation + "%");
     }
 
     public static Specification<Symptom> hasImage(Boolean booleanValue) {

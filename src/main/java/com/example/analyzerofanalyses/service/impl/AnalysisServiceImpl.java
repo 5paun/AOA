@@ -8,9 +8,12 @@ import com.example.analyzerofanalyses.repository.AnalysisRepository;
 import com.example.analyzerofanalyses.service.AnalysisService;
 import com.example.analyzerofanalyses.service.ImageService;
 import com.example.analyzerofanalyses.service.UserService;
+import com.example.analyzerofanalyses.web.dto.filter.AnalysisFilter;
+import com.example.analyzerofanalyses.web.specification.AnalysisSpecification;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -49,6 +52,25 @@ public class AnalysisServiceImpl implements AnalysisService {
         analysisRepository.save(analysis);
 
         return analysis;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Analysis> search(AnalysisFilter searchRequest) {
+        Specification<Analysis> specification = AnalysisSpecification
+                .belongsToUser(searchRequest.getUserId())
+                .and(AnalysisSpecification.hasTitle(searchRequest.getTitle()))
+                .and(AnalysisSpecification.totalCholesterolFrom(searchRequest.getTotalCholesterolFrom()))
+                .and(AnalysisSpecification.totalCholesterolTo(searchRequest.getTotalCholesterolTo()))
+                .and(AnalysisSpecification.whiteBloodCellsFrom(searchRequest.getWhiteBloodCellsFrom()))
+                .and(AnalysisSpecification.whiteBloodCellsTo(searchRequest.getWhiteBloodCellsTo()))
+                .and(AnalysisSpecification.lymphocytesFrom(searchRequest.getLymphocytesFrom()))
+                .and(AnalysisSpecification.lymphocytesTo(searchRequest.getLymphocytesTo()))
+                .and(AnalysisSpecification.createdDateFrom(searchRequest.getCreatedDateFrom()))
+                .and(AnalysisSpecification.createdDateTo(searchRequest.getCreatedDateTo()))
+                .and(AnalysisSpecification.hasImage(searchRequest.getHasImage()));
+
+        return analysisRepository.findAll(specification);
     }
 
     @Override

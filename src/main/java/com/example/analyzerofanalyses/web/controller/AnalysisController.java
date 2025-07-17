@@ -5,6 +5,7 @@ import com.example.analyzerofanalyses.domain.image.Image;
 import com.example.analyzerofanalyses.service.AnalysisService;
 import com.example.analyzerofanalyses.web.dto.Image.ImageDto;
 import com.example.analyzerofanalyses.web.dto.analysis.AnalysisDto;
+import com.example.analyzerofanalyses.web.dto.filter.AnalysisFilter;
 import com.example.analyzerofanalyses.web.dto.validation.OnUpdate;
 import com.example.analyzerofanalyses.web.mappers.AnalysisMapper;
 import com.example.analyzerofanalyses.web.mappers.ImageMapper;
@@ -24,6 +25,8 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/analyses")
@@ -66,6 +69,15 @@ public class AnalysisController {
         Analysis analysis = analysisService.getById(id);
 
         return analysisMapper.toDto(analysis);
+    }
+
+    @PostMapping("/search")
+    @Operation(summary = "Search AnalysisDtos")
+    @PreAuthorize("@customSecurityExpression.canAccessUser(#searchRequest.userId)")
+    public List<AnalysisDto> search(@RequestBody AnalysisFilter searchRequest) {
+        List<Analysis> analyses = analysisService.search(searchRequest);
+
+        return analysisMapper.toDto(analyses);
     }
 
     @DeleteMapping("/{id}")
