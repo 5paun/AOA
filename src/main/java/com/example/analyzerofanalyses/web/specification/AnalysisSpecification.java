@@ -6,91 +6,50 @@ import org.springframework.data.jpa.domain.Specification;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-public class AnalysisSpecification {
+public class AnalysisSpecification extends BaseSpecification {
 
-    private AnalysisSpecification() {}
-
-    public static Specification<Analysis> belongsToUser(Long userId) {
-        return ((root, query, criteriaBuilder) ->
-            userId == null
-                ? null
-                : criteriaBuilder.equal(root.get("user").get("id"), userId));
-
+    public static Specification<Analysis> belongsToUser (Long userId) {
+        return BaseSpecification.belongsToUser(userId);
     }
 
-    public static Specification<Analysis> hasTitle(String title) {
-        return (root, query, criteriaBuilder) ->
-                title == null
-                        ? null
-                        : criteriaBuilder.like(root.get("title"), "%" + title + "%");
+    public static Specification<Analysis> hasTitle(String value) {
+        return hasStringField(value, "title");
     }
 
     public static Specification<Analysis> totalCholesterolFrom(BigDecimal totalCholesterolFrom) {
-        return (root, query, criteriaBuilder) ->
-                totalCholesterolFrom == null
-                    ? null
-                    : criteriaBuilder.greaterThanOrEqualTo(root.get("totalCholesterol"), totalCholesterolFrom);
+        return greaterThanOrEqual(totalCholesterolFrom, "totalCholesterol");
     }
 
     public static Specification<Analysis> totalCholesterolTo(BigDecimal totalCholesterolTo) {
-        return (root, query, criteriaBuilder) ->
-                totalCholesterolTo == null
-                        ? null
-                        : criteriaBuilder.lessThanOrEqualTo(root.get("totalCholesterol"), totalCholesterolTo);
+        return lessThanOrEqual(totalCholesterolTo, "totalCholesterol");
     }
 
     public static Specification<Analysis> whiteBloodCellsFrom(BigDecimal whiteBloodCellsFrom) {
-        return (root, query, criteriaBuilder) ->
-                whiteBloodCellsFrom == null
-                        ? null
-                        : criteriaBuilder.greaterThanOrEqualTo(root.get("whiteBloodCells"), whiteBloodCellsFrom);
+        return greaterThanOrEqual(whiteBloodCellsFrom, "whiteBloodCells");
     }
 
     public static Specification<Analysis> whiteBloodCellsTo(BigDecimal whiteBloodCellsTo) {
-        return (root, query, criteriaBuilder) ->
-                whiteBloodCellsTo == null
-                        ? null
-                        : criteriaBuilder.lessThanOrEqualTo(root.get("whiteBloodCells"), whiteBloodCellsTo);
+        return lessThanOrEqual(whiteBloodCellsTo, "whiteBloodCells");
     }
 
     public static Specification<Analysis> lymphocytesFrom(Integer lymphocytesFrom) {
-        return (root, query, criteriaBuilder) ->
-                lymphocytesFrom == null
-                        ? null
-                        : criteriaBuilder.greaterThanOrEqualTo(root.get("lymphocytes"), lymphocytesFrom);
+        return greaterThanOrEqual(lymphocytesFrom, "lymphocytes");
     }
 
     public static Specification<Analysis> lymphocytesTo(Integer lymphocytesTo) {
-        return (root, query, criteriaBuilder) ->
-                lymphocytesTo == null
-                        ? null
-                        : criteriaBuilder.lessThanOrEqualTo(root.get("lymphocytes"), lymphocytesTo);
+        return lessThanOrEqual(lymphocytesTo, "lymphocytes");
     }
 
     public static Specification<Analysis> createdDateFrom(LocalDateTime createdDateFrom) {
-        return (root, query, criteriaBuilder) ->
-                createdDateFrom == null
-                        ? null
-                        : criteriaBuilder.greaterThanOrEqualTo(root.get("createdDate"), createdDateFrom);
+        return greaterThanOrEqual(createdDateFrom, "createdDate");
     }
 
     public static Specification<Analysis> createdDateTo(LocalDateTime createdDateTo) {
-        return (root, query, criteriaBuilder) ->
-                createdDateTo == null
-                        ? null
-                        : criteriaBuilder.lessThanOrEqualTo(root.get("createdDate"), createdDateTo);
+        return lessThanOrEqual(createdDateTo, "createdDate");
     }
 
-    public static Specification<Analysis> hasImage(Boolean booleanValue) {
-        return (root, query, criteriaBuilder) -> {
-            if (booleanValue == null) {
-                return null;
-            }
-
-            return booleanValue
-                    ? criteriaBuilder.greaterThan(criteriaBuilder.size(root.get("images")), 0)
-                    : criteriaBuilder.equal(criteriaBuilder.size(root.get("images")), 0);
-        };
+    public static Specification<Analysis> hasImage (Boolean booleanValue) {
+        return BaseSpecification.hasImage(booleanValue);
     }
 
 }
