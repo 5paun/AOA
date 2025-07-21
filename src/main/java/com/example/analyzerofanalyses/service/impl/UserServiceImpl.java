@@ -11,6 +11,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Caching;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -53,12 +55,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<User> search(UserFilter searchRequest) {
+    public Page<User> search(UserFilter searchRequest, Pageable pageable) {
         Specification<User> specification = UserSpecification
                         .hasName(searchRequest.getName())
                         .and(UserSpecification.hasEmail(searchRequest.getEmail()));
 
-        return userRepository.findAll(specification);
+        return userRepository.findAll(specification, pageable);
     }
 
     @Override

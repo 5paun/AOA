@@ -13,6 +13,8 @@ import com.example.analyzerofanalyses.web.specification.SymptomSpecification;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -51,14 +53,14 @@ public class SymptomServiceImpl implements SymptomService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<Symptom> search(SymptomFilter searchRequest) {
+    public Page<Symptom> search(SymptomFilter searchRequest, Pageable pageable) {
         Specification<Symptom> specification = SymptomSpecification
                 .hasTitle(searchRequest.getTitle())
                 .and(SymptomSpecification.hasDescription(searchRequest.getDescription()))
                 .and(SymptomSpecification.hasRecommendation(searchRequest.getRecommendation()))
                 .and(SymptomSpecification.hasImage(searchRequest.getHasImage()));
 
-        return symptomRepository.findAll(specification);
+        return symptomRepository.findAll(specification, pageable);
     }
 
     @Override

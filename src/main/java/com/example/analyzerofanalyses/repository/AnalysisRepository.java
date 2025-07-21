@@ -1,6 +1,8 @@
 package com.example.analyzerofanalyses.repository;
 
 import com.example.analyzerofanalyses.domain.analysis.Analysis;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -14,6 +16,6 @@ public interface AnalysisRepository extends JpaRepository<Analysis, Long> {
             """, nativeQuery = true)
     List<Analysis> findAllByUserId(Long userId);
 
-    List<Analysis> findAll(Specification<Analysis> specification);
+    Page<Analysis> findAll(Specification<Analysis> specification, Pageable pageable);
 
 }

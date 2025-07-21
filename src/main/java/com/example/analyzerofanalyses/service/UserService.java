@@ -2,6 +2,8 @@ package com.example.analyzerofanalyses.service;
 
 import com.example.analyzerofanalyses.domain.user.User;
 import com.example.analyzerofanalyses.web.dto.filter.UserFilter;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -12,7 +14,7 @@ public interface UserService {
 
     User getByEmail(String email);
 
-    List<User> search(UserFilter searchRequest);
+    Page<User> search(UserFilter searchRequest, Pageable pageable);
 
     User update(User user);
 

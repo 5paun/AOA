@@ -12,6 +12,10 @@ import com.example.analyzerofanalyses.web.mappers.ImageMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
@@ -74,8 +78,11 @@ public class AnalysisController {
     @PostMapping("/search")
     @Operation(summary = "Search AnalysisDtos")
     @PreAuthorize("@customSecurityExpression.canAccessUser(#searchRequest.userId)")
-    public List<AnalysisDto> search(@RequestBody AnalysisFilter searchRequest) {
-        List<Analysis> analyses = analysisService.search(searchRequest);
+    public Page<AnalysisDto> search(
+            @RequestBody AnalysisFilter searchRequest,
+            @ParameterObject @PageableDefault Pageable pageable
+    ) {
+        Page<Analysis> analyses = analysisService.search(searchRequest, pageable);
 
         return analysisMapper.toDto(analyses);
     }

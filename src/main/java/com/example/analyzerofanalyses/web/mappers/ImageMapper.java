@@ -5,6 +5,5 @@ import com.example.analyzerofanalyses.web.dto.Image.ImageDto;
 import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")
-public interface ImageMapper extends Mappable<
-        Image, ImageDto> {
+public interface ImageMapper extends Mappable<Image, ImageDto> {
 }

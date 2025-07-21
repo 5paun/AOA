@@ -13,6 +13,8 @@ import com.example.analyzerofanalyses.web.specification.AnalysisSpecification;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -56,7 +58,7 @@ public class AnalysisServiceImpl implements AnalysisService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<Analysis> search(AnalysisFilter searchRequest) {
+    public Page<Analysis> search(AnalysisFilter searchRequest, Pageable pageable) {
         Specification<Analysis> specification = AnalysisSpecification
                 .belongsToUser(searchRequest.getUserId())
                 .and(AnalysisSpecification.hasTitle(searchRequest.getTitle()))
@@ -70,7 +72,7 @@ public class AnalysisServiceImpl implements AnalysisService {
                 .and(AnalysisSpecification.createdDateTo(searchRequest.getCreatedDateTo()))
                 .and(AnalysisSpecification.hasImage(searchRequest.getHasImage()));
 
-        return analysisRepository.findAll(specification);
+        return analysisRepository.findAll(specification, pageable);
     }
 
     @Override

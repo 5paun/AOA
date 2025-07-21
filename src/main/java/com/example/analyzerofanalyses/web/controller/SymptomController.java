@@ -13,6 +13,10 @@ import com.example.analyzerofanalyses.web.mappers.SymptomMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
@@ -93,8 +97,11 @@ public class SymptomController {
     @PostMapping("/search")
     @Operation(summary = "Search SymptomDtos")
     @PreAuthorize("@customSecurityExpression.canAccessSymptom()")
-    public List<SymptomDto> search(@RequestBody SymptomFilter searchRequest) {
-        List<Symptom> symptoms = symptomService.search(searchRequest);
+    public Page<SymptomDto> search(
+            @RequestBody SymptomFilter searchRequest,
+            @ParameterObject @PageableDefault Pageable pageable
+    ) {
+        Page<Symptom> symptoms = symptomService.search(searchRequest, pageable);
 
         return symptomMapper.toDto(symptoms);
     }

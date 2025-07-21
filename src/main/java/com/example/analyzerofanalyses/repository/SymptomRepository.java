@@ -1,6 +1,8 @@
 package com.example.analyzerofanalyses.repository;
 
 import com.example.analyzerofanalyses.domain.symptom.Symptom;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -17,6 +19,6 @@ public interface SymptomRepository extends JpaRepository<Symptom, Long> {
             """, nativeQuery = true)
     List<Symptom> findAllByUserId(@Param("userId") Long userId);
 
-    List<Symptom> findAll(Specification<Symptom> specification);
+    Page<Symptom> findAll(Specification<Symptom> specification, Pageable pageable);
 
 }
