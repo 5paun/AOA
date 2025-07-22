@@ -9,7 +9,7 @@ import com.example.analyzerofanalyses.service.AnalysisService;
 import com.example.analyzerofanalyses.service.ImageService;
 import com.example.analyzerofanalyses.service.UserService;
 import com.example.analyzerofanalyses.web.dto.filter.AnalysisFilter;
-import com.example.analyzerofanalyses.web.specification.AnalysisSpecification;
+import com.example.analyzerofanalyses.web.specification.AnalysisSpecificationBuilder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
@@ -28,6 +28,7 @@ public class AnalysisServiceImpl implements AnalysisService {
     private final AnalysisRepository analysisRepository;
     private final UserService userService;
     private final ImageService imageService;
+    private final AnalysisSpecificationBuilder analysisSpecificationBuilder;
 
     @Override
     @Transactional(readOnly = true)
@@ -59,18 +60,7 @@ public class AnalysisServiceImpl implements AnalysisService {
     @Override
     @Transactional(readOnly = true)
     public Page<Analysis> search(AnalysisFilter searchRequest, Pageable pageable) {
-        Specification<Analysis> specification = AnalysisSpecification
-                .belongsToUser(searchRequest.getUserId())
-                .and(AnalysisSpecification.hasTitle(searchRequest.getTitle()))
-                .and(AnalysisSpecification.totalCholesterolFrom(searchRequest.getTotalCholesterolFrom()))
-                .and(AnalysisSpecification.totalCholesterolTo(searchRequest.getTotalCholesterolTo()))
-                .and(AnalysisSpecification.whiteBloodCellsFrom(searchRequest.getWhiteBloodCellsFrom()))
-                .and(AnalysisSpecification.whiteBloodCellsTo(searchRequest.getWhiteBloodCellsTo()))
-                .and(AnalysisSpecification.lymphocytesFrom(searchRequest.getLymphocytesFrom()))
-                .and(AnalysisSpecification.lymphocytesTo(searchRequest.getLymphocytesTo()))
-                .and(AnalysisSpecification.createdDateFrom(searchRequest.getCreatedDateFrom()))
-                .and(AnalysisSpecification.createdDateTo(searchRequest.getCreatedDateTo()))
-                .and(AnalysisSpecification.hasImage(searchRequest.getHasImage()));
+        Specification<Analysis> specification = analysisSpecificationBuilder.getSpecification(searchRequest);
 
         return analysisRepository.findAll(specification, pageable);
     }

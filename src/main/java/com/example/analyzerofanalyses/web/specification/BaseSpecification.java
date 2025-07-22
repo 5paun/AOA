@@ -5,26 +5,24 @@ import org.springframework.data.jpa.domain.Specification;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-public class BaseSpecification {
-
-    protected BaseSpecification() {}
-
-    public static <E> Specification<E> belongsToUser(Long userId) {
+public interface BaseSpecification<E> {
+    
+    default Specification<E> belongsToUser(Long clientId) {
         return ((root, query, criteriaBuilder) ->
-                userId == null
+                clientId == null
                         ? null
-                        : criteriaBuilder.equal(root.get("user").get("id"), userId));
+                        : criteriaBuilder.equal(root.get("user").get("id"), clientId));
 
     }
 
-    public static <E> Specification<E> hasStringField(String value, String field) {
+    default Specification<E> hasStringField(String value, String field) {
         return (root, query, criteriaBuilder) ->
                 value == null
                         ? null
                         : criteriaBuilder.like(root.get(field), "%" + value + "%");
     }
 
-    public static <T, E> Specification<E> greaterThanOrEqual(T value, String field) {
+    default <T> Specification<E> greaterThanOrEqual(T value, String field) {
         return (root, query, criteriaBuilder) ->
                 switch (value) {
                     case null -> null;
@@ -35,7 +33,7 @@ public class BaseSpecification {
                 };
     }
 
-    public static <T, E> Specification<E> lessThanOrEqual(T value, String field) {
+    default <T> Specification<E> lessThanOrEqual(T value, String field) {
         return (root, query, criteriaBuilder) ->
             switch (value) {
                 case null -> null;
@@ -46,7 +44,7 @@ public class BaseSpecification {
         };
     }
 
-    public static <E> Specification<E> hasImage(Boolean booleanValue) {
+    default Specification<E> hasImage(Boolean booleanValue) {
         return (root, query, criteriaBuilder) -> {
             if (booleanValue == null) {
                 return null;

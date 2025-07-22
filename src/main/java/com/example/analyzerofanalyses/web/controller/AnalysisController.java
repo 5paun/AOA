@@ -30,8 +30,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/api/v1/analyses")
 @RequiredArgsConstructor
@@ -77,7 +75,7 @@ public class AnalysisController {
 
     @PostMapping("/search")
     @Operation(summary = "Search AnalysisDtos")
-    @PreAuthorize("@customSecurityExpression.canAccessUser(#searchRequest.userId)")
+    @PreAuthorize("@customSecurityExpression.canAccessUser(#searchRequest.clientId)")
     public Page<AnalysisDto> search(
             @RequestBody AnalysisFilter searchRequest,
             @ParameterObject @PageableDefault Pageable pageable

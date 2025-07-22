@@ -9,7 +9,7 @@ import com.example.analyzerofanalyses.service.ImageService;
 import com.example.analyzerofanalyses.service.SymptomService;
 import com.example.analyzerofanalyses.service.UserService;
 import com.example.analyzerofanalyses.web.dto.filter.SymptomFilter;
-import com.example.analyzerofanalyses.web.specification.SymptomSpecification;
+import com.example.analyzerofanalyses.web.specification.SymptomSpecificationBuilder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
@@ -28,6 +28,7 @@ public class SymptomServiceImpl implements SymptomService {
     private final SymptomRepository symptomRepository;
     private final UserService userService;
     private final ImageService imageService;
+    private final SymptomSpecificationBuilder symptomSpecificationBuilder;
 
     @Override
     @Transactional(readOnly = true)
@@ -54,11 +55,7 @@ public class SymptomServiceImpl implements SymptomService {
     @Override
     @Transactional(readOnly = true)
     public Page<Symptom> search(SymptomFilter searchRequest, Pageable pageable) {
-        Specification<Symptom> specification = SymptomSpecification
-                .hasTitle(searchRequest.getTitle())
-                .and(SymptomSpecification.hasDescription(searchRequest.getDescription()))
-                .and(SymptomSpecification.hasRecommendation(searchRequest.getRecommendation()))
-                .and(SymptomSpecification.hasImage(searchRequest.getHasImage()));
+        Specification<Symptom> specification = symptomSpecificationBuilder.getSpecification(searchRequest);
 
         return symptomRepository.findAll(specification, pageable);
     }

@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 @Data
 public class AnalysisFilter {
 
-    private Long userId;
+    private Long clientId;
     private String title;
     private BigDecimal totalCholesterolFrom;
     private BigDecimal totalCholesterolTo;

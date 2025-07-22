@@ -6,7 +6,7 @@ import com.example.analyzerofanalyses.domain.user.User;
 import com.example.analyzerofanalyses.repository.UserRepository;
 import com.example.analyzerofanalyses.service.UserService;
 import com.example.analyzerofanalyses.web.dto.filter.UserFilter;
-import com.example.analyzerofanalyses.web.specification.UserSpecification;
+import com.example.analyzerofanalyses.web.specification.UserSpecificationBuilder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
@@ -28,6 +28,7 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final UserSpecificationBuilder userSpecificationBuilder;
 
     @Override
     @Transactional(readOnly = true)
@@ -56,9 +57,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional(readOnly = true)
     public Page<User> search(UserFilter searchRequest, Pageable pageable) {
-        Specification<User> specification = UserSpecification
-                        .hasName(searchRequest.getName())
-                        .and(UserSpecification.hasEmail(searchRequest.getEmail()));
+        Specification<User> specification = userSpecificationBuilder.getSpecification(searchRequest);
 
         return userRepository.findAll(specification, pageable);
     }
