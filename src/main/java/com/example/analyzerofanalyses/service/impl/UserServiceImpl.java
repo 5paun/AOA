@@ -88,9 +88,14 @@ public class UserServiceImpl implements UserService {
         Long userId = user.getId();
         User existingUser = getById(userId);
 
-        if (user.getName() != null) {
-            existingUser.setName(user.getName());
+        if (user.getFirstName() != null) {
+            existingUser.setFirstName(user.getFirstName());
         }
+
+        if (user.getLastName() != null) {
+            existingUser.setLastName(user.getLastName());
+        }
+
 
         if (user.getEmail() != null) {
             if (isEmailExist(user.getEmail(), userId)) {
@@ -102,6 +107,10 @@ public class UserServiceImpl implements UserService {
 
         if (user.getPassword() != null) {
             existingUser.setPassword(passwordEncoder.encode(user.getPassword()));
+        }
+
+        if (user.getDateOfBirth() != null) {
+            existingUser.setDateOfBirth(user.getDateOfBirth());
         }
 
         userRepository.save(existingUser);

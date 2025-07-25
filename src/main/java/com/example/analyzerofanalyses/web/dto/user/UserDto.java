@@ -2,11 +2,15 @@ package com.example.analyzerofanalyses.web.dto.user;
 
 import com.example.analyzerofanalyses.web.dto.validation.OnCreate;
 import com.example.analyzerofanalyses.web.dto.validation.OnUpdate;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
+import org.springframework.format.annotation.DateTimeFormat;
+
+import java.time.LocalDate;
 
 
 @Data
@@ -17,17 +21,29 @@ public class UserDto {
     @NotNull(message = "Id must be not null.", groups = OnUpdate.class)
     private Long id;
 
-    @Schema(description = "User name ", example = "Denis Shalashov")
+    @Schema(description = "User first name ", example = "Denis")
     @NotNull(
-            message = "Name must be not null.",
+            message = "First name must be not null.",
             groups = {OnCreate.class, OnUpdate.class}
     )
     @Length(
             max = 255,
-            message = "Name length must be smaller than 255 symbols.",
+            message = "First name length must be smaller than 255 symbols.",
             groups = {OnCreate.class, OnUpdate.class}
     )
-    private String name;
+    private String firstName;
+
+    @Schema(description = "User last name ", example = "Shalashov")
+    @NotNull(
+            message = "Last name must be not null.",
+            groups = {OnCreate.class, OnUpdate.class}
+    )
+    @Length(
+            max = 255,
+            message = "Last name length must be smaller than 255 symbols.",
+            groups = {OnCreate.class, OnUpdate.class}
+    )
+    private String lastName;
 
     @Schema(description = "User email ", example = "test@mail.ru")
     @NotNull(
@@ -62,4 +78,9 @@ public class UserDto {
             groups = {OnCreate.class}
     )
     private String passwordConfirmation;
+
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private LocalDate dateOfBirth;
+    private Integer age;
 }

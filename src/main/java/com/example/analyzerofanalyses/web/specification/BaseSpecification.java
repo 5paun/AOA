@@ -3,6 +3,7 @@ package com.example.analyzerofanalyses.web.specification;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public interface BaseSpecification<E> {
@@ -29,6 +30,7 @@ public interface BaseSpecification<E> {
                     case Integer i -> criteriaBuilder.greaterThanOrEqualTo(root.get(field), i);
                     case BigDecimal bigDecimal -> criteriaBuilder.greaterThanOrEqualTo(root.get(field), bigDecimal);
                     case LocalDateTime localDateTime -> criteriaBuilder.greaterThanOrEqualTo(root.get(field), localDateTime);
+                    case LocalDate localDate -> criteriaBuilder.greaterThanOrEqualTo(root.get(field), localDate);
                     default -> throw new IllegalArgumentException(("Unsupported type: " + value.getClass().getName()));
                 };
     }
@@ -40,6 +42,7 @@ public interface BaseSpecification<E> {
                 case Integer i -> criteriaBuilder.lessThanOrEqualTo(root.get(field), i);
                 case BigDecimal bigDecimal -> criteriaBuilder.lessThanOrEqualTo(root.get(field), bigDecimal);
                 case LocalDateTime localDateTime -> criteriaBuilder.lessThanOrEqualTo(root.get(field), localDateTime);
+                case LocalDate localDate -> criteriaBuilder.lessThanOrEqualTo(root.get(field), localDate);
                 default -> throw new IllegalArgumentException(("Unsupported type: " + value.getClass().getName()));
         };
     }

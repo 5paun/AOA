@@ -22,6 +22,8 @@ import jakarta.persistence.Transient;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.time.LocalDate;
+import java.time.Period;
 import java.util.List;
 import java.util.Set;
 
@@ -34,12 +36,15 @@ public class User implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String name;
+    private String firstName;
+    private String lastName;
     private String email;
     private String password;
-
     @Transient
     private String passwordConfirmation;
+    private LocalDate dateOfBirth;
+    @Transient
+    private Integer age;
 
     @Column(name = "role")
     @ElementCollection(fetch = FetchType.EAGER)
@@ -53,5 +58,9 @@ public class User implements Serializable {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Analysis> analyses;
+
+    public Integer getAge() {
+        return dateOfBirth == null ? null : Period.between(dateOfBirth, LocalDate.now()).getYears();
+    }
 
 }

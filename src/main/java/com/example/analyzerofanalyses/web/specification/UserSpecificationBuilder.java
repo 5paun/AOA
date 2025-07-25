@@ -10,8 +10,11 @@ public class UserSpecificationBuilder implements SpecificationBuilder<UserFilter
 
     @Override
     public Specification<User> getSpecification(UserFilter searchRequest) {
-        return hasName(searchRequest.getName())
-                .and(hasEmail(searchRequest.getEmail()));
+        return hasNameOrSurname(searchRequest.getNameOrSurname())
+                .and(hasEmail(searchRequest.getEmail()))
+                .and(dateOfBirthFrom(searchRequest.getDateOfBirthFrom()))
+                .and(dateOfBirthTo(searchRequest.getDateOfBirthTo()))
+                .and(hasAgeBetween(searchRequest.getAgeFrom(), searchRequest.getAgeTo()));
     }
 
 }
